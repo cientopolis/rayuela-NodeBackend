@@ -1,23 +1,35 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import * as bcrypt from 'bcryptjs';
+
+export type UserDocument = User & Document;
+
+export enum UserRole {
+  Admin = 'Admin',
+  Volunteer = 'Volunteer',
+}
 
 @Schema()
-export class User extends Document {
-  @Prop({ unique: true, required: true })
-  username: string;
+export class User {
+  @Prop({ required: true })
+  complete_name: string;  // Nombre completo del usuario
+
+  @Prop({ required: true, unique: true })
+  username: string;  // Nombre de usuario único
+
+  @Prop({ required: true, unique: true })
+  email: string;  // Email único
 
   @Prop({ required: true })
-  password: string;
+  password: string;  // Contraseña (hash)
+
+  @Prop({ default: null })
+  profile_image: string;  // Imagen de perfil (puede ser una URL)
+
+  @Prop({ default: false })
+  verified: boolean;  // Indica si el usuario ha verificado su cuenta
+
+  @Prop({ enum: UserRole, default: UserRole.Volunteer })
+  role: UserRole;  // Rol del usuario (Admin o Volunteer)
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.pre<User>('save', async function (next) {
-  if (!this.isModified('password')) {
-    return next();
-  }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
