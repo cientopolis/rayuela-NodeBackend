@@ -1,9 +1,8 @@
-import {Injectable, Logger} from "@nestjs/common";
-import {MongooseModule, MongooseModuleOptions, MongooseOptionsFactory} from "@nestjs/mongoose";
+import {Injectable} from "@nestjs/common";
+import {MongooseModuleOptions, MongooseOptionsFactory} from "@nestjs/mongoose";
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
-    private readonly logger = new Logger(MongooseConfigService.name);
 
     createMongooseOptions(): MongooseModuleOptions {
         return {
