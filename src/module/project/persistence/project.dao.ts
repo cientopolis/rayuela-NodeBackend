@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { Project, ProjectDocument } from './persistence/project.schema';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Project, ProjectDocument } from './project.schema';
+import { CreateProjectDto } from '../dto/create-project.dto';
 
 @Injectable()
-export class ProjectService {
+export class ProjectDao {
   constructor(
-    @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+    @InjectModel(Project.name) private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
   async findAll(): Promise<Project[]> {
