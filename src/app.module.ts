@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import {MongooseModule} from "@nestjs/mongoose";
 import { ProjectModule } from './module/project/project.module';
 import { AuthModule } from './module/auth/auth.module';
+import { TaskModule } from './module/task/task.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './module/auth/auth.module';
     MongooseModule.forRoot(process.env.DB_CONNECTION as string),
     ProjectModule,
     AuthModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
