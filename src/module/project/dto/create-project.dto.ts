@@ -4,5 +4,5 @@ export class CreateProjectDto {
     image: string;
     web?: string;
     available: boolean;
-    areas: string[];  // Array de strings para las áreas
+    areas: string[];
 }

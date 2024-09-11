@@ -11,7 +11,7 @@ export class Project {
     @Prop({ maxlength: 500 })
     description: string;
 
-    @Prop({ required: true, maxlength: 100 })
+    @Prop({ required: true, maxlength: 500 })
     image: string;
 
     @Prop({ maxlength: 100 })
