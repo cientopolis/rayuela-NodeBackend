@@ -30,6 +30,9 @@ export class User {
 
   @Prop({ enum: UserRole, default: UserRole.Volunteer })
   role: UserRole;  // Rol del usuario (Admin o Volunteer)
+
+  @Prop({ type: [String], default: [] })
+  projects: string[];  // IDs de proyectos asociados al usuario
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

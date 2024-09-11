@@ -15,4 +15,12 @@ export class UserDao {
     const createdUser = new this.userModel(userData);
     return createdUser.save();
   }
+
+  async getUserById(userId: string) {
+    return this.userModel.findById(userId).exec();
+  }
+
+  async save(userId: string, user: any) {
+    return this.userModel.findByIdAndUpdate(userId, user)
+  }
 }

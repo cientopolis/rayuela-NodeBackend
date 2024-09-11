@@ -1,14 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserDocument, UserRole } from './users/user.schema';
-import { UsersService } from './users/user.service';
+import { UserService } from './users/user.service';
 import * as bcrypt from 'bcrypt';
-import { Roles } from './role.decorator';
+
+export interface UserJWT {
+  userId: string,
+  username: string,
+  role: UserRole,
+}
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private usersService: UserService,
     private jwtService: JwtService,
   ) {}
 

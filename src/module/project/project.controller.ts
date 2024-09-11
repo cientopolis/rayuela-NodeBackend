@@ -5,10 +5,20 @@ import { Roles } from '../auth/role.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectService } from './project.service';
+import { UserService } from '../auth/users/user.service';
 
 @Controller('projects')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly userService: UserService,
+    ) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post('subscription/:id')
+  subscribe(@Request() req, @Param('id') id: string) {
+    return this.userService.subscribeToProject(req.user, id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get()

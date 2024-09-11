@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { User, UserSchema } from './users/user.schema';
-import { UsersService } from './users/user.service';
+import { UserService } from './users/user.service';
 import { UserController } from './users/user.controller';
 import { ConfigModule } from '@nestjs/config';
 import { UserDao } from './users/user.dao';
@@ -23,7 +23,10 @@ import { UserDao } from './users/user.dao';
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
-  providers: [AuthService, JwtStrategy, UsersService, UserDao],
+  providers: [AuthService, JwtStrategy, UserService, UserDao],
   controllers: [AuthController,UserController],
+  exports: [
+    AuthService, JwtStrategy, UserService, UserDao
+  ]
 })
 export class AuthModule {}

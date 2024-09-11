@@ -4,9 +4,10 @@ import { ProjectController } from './project.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectSchema } from './persistence/project.schema';
 import { ProjectDao } from './persistence/project.dao';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }])],
+  imports: [MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }]), AuthModule],
   controllers: [ProjectController],
   providers: [ProjectService, ProjectDao],
 })
