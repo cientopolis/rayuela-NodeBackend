@@ -10,6 +10,7 @@ import { AuthModule } from '../auth/auth.module';
   imports: [MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }]), AuthModule],
   controllers: [ProjectController],
   providers: [ProjectService, ProjectDao],
+  exports: [ProjectService, ProjectDao],
 })
 export class ProjectModule {
 }

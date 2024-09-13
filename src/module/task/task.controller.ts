@@ -15,7 +15,7 @@ export class TaskController {
   @Roles(UserRole.Admin)
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
-    return this.taskService.create(createTaskDto);
+    return this.taskService.create(CreateTaskDto.fromDTO(createTaskDto));
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type ProjectDocument = Project & Document;
 
@@ -20,8 +20,8 @@ export class Project {
     @Prop({ required: true })
     available: boolean;
 
-    @Prop({ type: [String], default: [] })  // Array de strings
-    areas: string[];
+    @Prop({ type: [MongooseSchema.Types.Mixed], default: [] })  // Permite cualquier tipo
+    areas: any[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

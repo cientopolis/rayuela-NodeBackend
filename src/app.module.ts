@@ -6,6 +6,7 @@ import {MongooseModule} from "@nestjs/mongoose";
 import { ProjectModule } from './module/project/project.module';
 import { AuthModule } from './module/auth/auth.module';
 import { TaskModule } from './module/task/task.module';
+import { CheckinModule } from './module/checkin/checkin.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TaskModule } from './module/task/task.module';
     ProjectModule,
     AuthModule,
     TaskModule,
+    CheckinModule,
   ],
   controllers: [AppController],
   providers: [AppService],

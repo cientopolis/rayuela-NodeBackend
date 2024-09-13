@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Task, TaskDocument } from './task.schema';
+import { TaskDocument } from './task.schema';
+import { Task } from '../entities/task.entity';
+import { CreateTaskDto } from '../dto/create-task.dto';
 
 @Injectable()
 export class TaskDao {
-  constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>) {}
+  constructor(@InjectModel("Task") private taskModel: Model<TaskDocument>) {}
 
-  async create(taskData: any): Promise<TaskDocument> {
+  async create(taskData: CreateTaskDto): Promise<TaskDocument> {
     const createdTask = new this.taskModel(taskData);
     return createdTask.save();
   }
 
-  async getTaskById(taskId: string): Promise<TaskDocument | null> {
-    return this.taskModel.findById(taskId).exec();
+  async getTaskById(taskId: string): Promise<Task> {
+    return await this.taskModel.findById(taskId).exec()['_doc'] as Task;
   }
 
   async getAllTasks(): Promise<TaskDocument[]> {
