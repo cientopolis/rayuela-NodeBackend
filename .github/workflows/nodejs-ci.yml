@@ -42,16 +42,3 @@ jobs:
       # Ejecución de los tests con Jest o el framework que estés utilizando
       - name: Run Tests
         run: npm test
-
-      # Generar un reporte de la cobertura de tests (opcional)
-      - name: Test Coverage Report
-        run: npm run test:coverage
-        if: success() # Solo si los tests pasan correctamente
-
-      # Guardar artefactos de la cobertura (opcional)
-      - name: Upload Coverage to GitHub
-        uses: actions/upload-artifact@v3
-        if: success()
-        with:
-          name: coverage-report
-          path: coverage
