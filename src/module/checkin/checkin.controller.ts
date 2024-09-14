@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { CheckinService } from './checkin.service';
 import { CreateCheckinDto } from './dto/create-checkin.dto';
 import { UpdateCheckinDto } from './dto/update-checkin.dto';
@@ -10,8 +20,18 @@ export class CheckinController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createCheckinDto: CreateCheckinDto) {
-    return this.checkinService.create(createCheckinDto);
+  async create(@Body() createCheckinDto: CreateCheckinDto, @Req() req) {
+    const userId = req.user.userId;
+    return this.checkinService.create(
+      new CreateCheckinDto({
+        latitude: createCheckinDto.latitude,
+        longitude: createCheckinDto.longitude,
+        datetime: createCheckinDto.datetime,
+        projectId: createCheckinDto.projectId,
+        taskId: createCheckinDto.taskId,
+        userId: userId,
+      }),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -28,7 +48,10 @@ export class CheckinController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCheckinDto: UpdateCheckinDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateCheckinDto: UpdateCheckinDto,
+  ) {
     return this.checkinService.update(id, updateCheckinDto);
   }
 

@@ -1,9 +1,12 @@
-import { TaskTimeRestriction } from '../dto/create-task.dto';
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { Polygon } from 'geojson';
 import { GeoUtils } from '../geoUtils';
+import { TaskTimeRestriction } from './time-restriction.entity';
 
 export class Task {
+  get projectId(): string {
+    return this.#projectId;
+  }
   #name: string;
   #description: string;
   #projectId: string;
@@ -11,7 +14,14 @@ export class Task {
   #areaGeoJSON: Polygon;
   #checkinAmount: number;
 
-  constructor(name: string, description: string, projectId: string, timeRestriction: TaskTimeRestriction, area: Polygon, checkinAmount: number) {
+  constructor(
+    name: string,
+    description: string,
+    projectId: string,
+    timeRestriction: TaskTimeRestriction,
+    area: Polygon,
+    checkinAmount: number,
+  ) {
     this.#name = name;
     this.#description = description;
     this.#projectId = projectId;
@@ -25,7 +35,7 @@ export class Task {
       this.isSameProject(checkin),
       this.isValidTimeRestriction(checkin.date),
       this.idValidArea(checkin),
-    ]
+    ];
     return validations.every(Boolean);
   }
 
@@ -38,6 +48,10 @@ export class Task {
   }
 
   private idValidArea(checkin: Checkin) {
-    return GeoUtils.isPointInPolygon(parseFloat(checkin.latitude), parseFloat(checkin.longitude), this.#areaGeoJSON);
+    return GeoUtils.isPointInPolygon(
+      parseFloat(checkin.latitude),
+      parseFloat(checkin.longitude),
+      this.#areaGeoJSON,
+    );
   }
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskDao } from './persistence/task.dao';
@@ -10,13 +14,13 @@ export class TaskService {
   constructor(
     private readonly taskDao: TaskDao,
     private readonly projectService: ProjectService,
-    ) {}
+  ) {}
 
   async create(createTaskDto: CreateTaskDto) {
     const project = await this.projectService.findOne(createTaskDto.projectId);
-    const area = project.areas.find(a => a.name === createTaskDto.areaId);
-    if(!area) {
-      throw new BadRequestException("Area not found");
+    const area = project.areas.find((a) => a.name === createTaskDto.areaId);
+    if (!area) {
+      throw new BadRequestException('Area not found');
     }
     return await this.taskDao.create(createTaskDto);
   }
@@ -27,7 +31,7 @@ export class TaskService {
 
   async findOne(id: string): Promise<Task> {
     const task: Task = await this.taskDao.getTaskById(id);
-    if(!task) {
+    if (!task) {
       throw new NotFoundException('Task not found');
     }
     return task;

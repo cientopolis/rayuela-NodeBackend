@@ -1,0 +1,57 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x] # Puedes ajustar las versiones de Node.js según sea necesario
+
+    steps:
+      # Checkout del código fuente del repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup de Node.js para las versiones indicadas
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Instalación de las dependencias del proyecto
+      - name: Install dependencies
+        run: npm install
+
+      # Ejecución del linter
+      - name: Run ESLint
+        run: npm run lint
+
+      # Ejecución de los tests con Jest o el framework que estés utilizando
+      - name: Run Tests
+        run: npm test
+
+      # Generar un reporte de la cobertura de tests (opcional)
+      - name: Test Coverage Report
+        run: npm run test:coverage
+        if: success() # Solo si los tests pasan correctamente
+
+      # Guardar artefactos de la cobertura (opcional)
+      - name: Upload Coverage to GitHub
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: coverage-report
+          path: coverage

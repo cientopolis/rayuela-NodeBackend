@@ -2,7 +2,11 @@ import * as turf from '@turf/turf';
 import { Polygon } from 'geojson';
 
 export class GeoUtils {
-  static isPointInPolygon(longitude: number, latitude: number, polygonGeoJSON: Polygon): boolean {
+  static isPointInPolygon(
+    longitude: number,
+    latitude: number,
+    polygonGeoJSON: Polygon,
+  ): boolean {
     // Crear un punto con las coordenadas proporcionadas
     const point = turf.point([longitude, latitude]);
 

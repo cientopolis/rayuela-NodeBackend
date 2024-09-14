@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from './user.schema';
+import { UserTemplate, UserDocument } from './user.schema';
 
 @Injectable()
 export class UserDao {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(UserTemplate.collectionName())
+    private userModel: Model<UserDocument>,
+  ) {}
 
-  async findByEmailOrUsername(email: string, username: string): Promise<UserDocument | null> {
+  async findByEmailOrUsername(
+    email: string,
+    username: string,
+  ): Promise<UserDocument | null> {
     return this.userModel.findOne({ $or: [{ email }, { username }] }).exec();
   }
 
@@ -21,6 +27,6 @@ export class UserDao {
   }
 
   async save(userId: string, user: any) {
-    return this.userModel.findByIdAndUpdate(userId, user)
+    return this.userModel.findByIdAndUpdate(userId, user);
   }
 }

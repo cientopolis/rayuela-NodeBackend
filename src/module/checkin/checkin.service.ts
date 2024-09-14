@@ -14,10 +14,11 @@ export class CheckinService {
 
   async create(createCheckinDto: CreateCheckinDto) {
     const task: Task = await this.taskService.findOne(createCheckinDto.taskId);
-    if (!task.accept(createCheckinDto.toDomain())) {
-
+    const checkin = createCheckinDto.toDomain();
+    if (!task.accept(checkin)) {
+      checkin.validateContribution();
     }
-    return this.checkInDao.create(createCheckinDto);
+    return this.checkInDao.create(checkin);
   }
 
   async findAll() {

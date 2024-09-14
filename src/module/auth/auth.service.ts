@@ -5,9 +5,9 @@ import { UserService } from './users/user.service';
 import * as bcrypt from 'bcrypt';
 
 export interface UserJWT {
-  userId: string,
-  username: string,
-  role: UserRole,
+  userId: string;
+  username: string;
+  role: UserRole;
 }
 
 @Injectable()
@@ -18,8 +18,9 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmailOrUsername("",username);
+    const user = await this.usersService.findByEmailOrUsername('', username);
     if (user && (await bcrypt.compare(password, user.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
     }
@@ -28,7 +29,10 @@ export class AuthService {
 
   async register(registerDto: any): Promise<UserDocument> {
     // Verifica que el correo y el username no estén ya en uso
-    const existingUser = await this.usersService.findByEmailOrUsername(registerDto.email, registerDto.username);
+    const existingUser = await this.usersService.findByEmailOrUsername(
+      registerDto.email,
+      registerDto.username,
+    );
     if (existingUser) {
       throw new BadRequestException('Email or Username already in use');
     }
@@ -50,10 +54,13 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user._doc.username, sub: user._doc._id, role: user._doc.role };
+    const payload = {
+      username: user._doc.username,
+      sub: user._doc._id,
+      role: user._doc.role,
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
-
 }

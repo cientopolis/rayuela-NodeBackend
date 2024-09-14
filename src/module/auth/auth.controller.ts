@@ -1,4 +1,10 @@
-import { Controller, Post, Body, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserRole } from './users/user.schema';
 
@@ -27,7 +33,8 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body() body: {
+    @Body()
+    body: {
       complete_name: string;
       username: string;
       email: string;
@@ -36,11 +43,14 @@ export class AuthController {
       role?: UserRole; // Por default es volunteer
     },
   ) {
-    const { complete_name, username, email, password, profile_image, role } = body;
+    const { complete_name, username, email, password, profile_image, role } =
+      body;
 
     // Verifica si los campos obligatorios están presentes
-    if (!complete_name || !username || !email || !password ) {
-      throw new BadRequestException('Complete name, username, email, and password are required');
+    if (!complete_name || !username || !email || !password) {
+      throw new BadRequestException(
+        'Complete name, username, email, and password are required',
+      );
     }
 
     return this.authService.register({
@@ -49,7 +59,7 @@ export class AuthController {
       email,
       password,
       profile_image,
-      role
+      role,
     });
   }
 }

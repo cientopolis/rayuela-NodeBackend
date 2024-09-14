@@ -7,7 +7,10 @@ import { UserJWT } from '../auth.service';
 export class UserService {
   constructor(private readonly userDao: UserDao) {}
 
-  async findByEmailOrUsername(email: string, username: string): Promise<UserDocument | null> {
+  async findByEmailOrUsername(
+    email: string,
+    username: string,
+  ): Promise<UserDocument | null> {
     return this.userDao.findByEmailOrUsername(email, username);
   }
 
@@ -18,10 +21,13 @@ export class UserService {
   async subscribeToProject(user: UserJWT, projectId: string) {
     const dbUser: any = await this.userDao.getUserById(user.userId);
 
-    if(dbUser.projects.includes( projectId)){
+    if (dbUser.projects.includes(projectId)) {
       throw new BadRequestException('Subscription already exists');
     }
 
-    return this.userDao.save(user.userId, {... dbUser._doc, projects: dbUser._doc.projects.concat([projectId])});
+    return this.userDao.save(user.userId, {
+      ...dbUser._doc,
+      projects: dbUser._doc.projects.concat([projectId]),
+    });
   }
 }

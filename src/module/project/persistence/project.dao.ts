@@ -1,20 +1,21 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Project, ProjectDocument } from './project.schema';
+import { ProjectTemplate, ProjectDocument } from './project.schema';
 import { CreateProjectDto } from '../dto/create-project.dto';
 
 @Injectable()
 export class ProjectDao {
   constructor(
-    @InjectModel(Project.name) private readonly projectModel: Model<ProjectDocument>,
+    @InjectModel(ProjectTemplate.collectionName())
+    private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
-  async findAll(): Promise<Project[]> {
+  async findAll(): Promise<ProjectTemplate[]> {
     return this.projectModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Project> {
+  async findOne(id: string): Promise<ProjectTemplate> {
     const project = await this.projectModel.findById(id).exec();
     if (!project) {
       throw new NotFoundException('Project not found');
@@ -22,13 +23,18 @@ export class ProjectDao {
     return project;
   }
 
-  async create(createProjectDto: CreateProjectDto): Promise<Project> {
+  async create(createProjectDto: CreateProjectDto): Promise<ProjectTemplate> {
     const project = new this.projectModel(createProjectDto);
     return project.save();
   }
 
-  async update(id: string, updateProjectDto: CreateProjectDto): Promise<Project> {
-    const updatedProject = await this.projectModel.findByIdAndUpdate(id, updateProjectDto, { new: true }).exec();
+  async update(
+    id: string,
+    updateProjectDto: CreateProjectDto,
+  ): Promise<ProjectTemplate> {
+    const updatedProject = await this.projectModel
+      .findByIdAndUpdate(id, updateProjectDto, { new: true })
+      .exec();
     if (!updatedProject) {
       throw new NotFoundException('Project not found');
     }

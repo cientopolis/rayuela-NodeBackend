@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { TaskTimeRestriction } from '../dto/create-task.dto';
+import { TaskTimeRestriction } from '../entities/time-restriction.entity';
 
-export type TaskDocument = TaskSchemaClass & Document;
+export type TaskDocument = TaskSchemaTemplate & Document;
 
 @Schema()
-export class TaskSchemaClass {
+export class TaskSchemaTemplate {
   @Prop({ required: true })
   name: string;
 
@@ -15,13 +15,16 @@ export class TaskSchemaClass {
   @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
   projectId: Types.ObjectId;
 
-  @Prop({ required: true, type: {
+  @Prop({
+    required: true,
+    type: {
       days: { type: [Number], required: true }, // Lista de números para los días (1 a 7)
       time: {
         start: { type: Number, required: true, min: 0, max: 23 }, // Hora de inicio
-        end: { type: Number, required: true, min: 0, max: 23 },   // Hora de fin
-      }
-    }})
+        end: { type: Number, required: true, min: 0, max: 23 }, // Hora de fin
+      },
+    },
+  })
   timeRestriction: TaskTimeRestriction; // Se embebe la estructura de TaskTimeRestriction
 
   @Prop({ type: Types.ObjectId, ref: 'Area', required: true })
@@ -29,6 +32,10 @@ export class TaskSchemaClass {
 
   @Prop({ required: true, min: 1 })
   checkinAmount: number;
+
+  static collectionName() {
+    return 'Task';
+  }
 }
 
-export const TaskSchema = SchemaFactory.createForClass(TaskSchemaClass);
+export const TaskSchema = SchemaFactory.createForClass(TaskSchemaTemplate);
