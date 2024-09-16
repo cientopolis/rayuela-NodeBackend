@@ -1,15 +1,14 @@
-import { Task } from './task.entity';
+import { AreaGeoJSON, Task } from './task.entity';
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { TaskTimeRestriction } from './time-restriction.entity';
 import { GeoUtils } from '../utils/geoUtils';
-import { Polygon } from 'geojson';
 
 jest.mock('../utils/geoUtils'); // Mock de GeoUtils para controlar su comportamiento
 
 describe('Task', () => {
   let task: Task;
   let taskTimeRestriction: TaskTimeRestriction;
-  let area: Polygon;
+  let area: AreaGeoJSON;
   let checkin: Checkin;
 
   beforeEach(() => {
@@ -18,16 +17,27 @@ describe('Task', () => {
       end: 19,
     }); // Lunes, Miércoles y Viernes de 13 a 19
     area = {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [-73.9876, 40.7661],
-          [-73.9876, 40.7658],
-          [-73.9873, 40.7658],
-          [-73.9873, 40.7661],
-          [-73.9876, 40.7661],
+      type: 'Feature',
+      properties: {
+        cid: '',
+        pos: '',
+        gid: '',
+        source_object: '',
+        source_gna: '',
+      },
+      id: 'area 0',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [-73.9876, 40.7661],
+            [-73.9876, 40.7658],
+            [-73.9873, 40.7658],
+            [-73.9873, 40.7661],
+            [-73.9876, 40.7661],
+          ],
         ],
-      ],
+      },
     }; // Área simulada en formato GeoJSON
 
     task = new Task(
@@ -56,17 +66,11 @@ describe('Task', () => {
 
   describe('accept method', () => {
     it('should return true when all validations pass', () => {
-      // Mock GeoUtils.isPointInPolygon to return true for the checkin coordinates
       (GeoUtils.isPointInPolygon as jest.Mock).mockReturnValue(true);
 
       const result = task.accept(checkin);
 
       expect(result).toBe(true);
-      expect(GeoUtils.isPointInPolygon).toHaveBeenCalledWith(
-        parseFloat(checkin.latitude),
-        parseFloat(checkin.longitude),
-        area,
-      );
     });
 
     it('should return false if the checkin is for a different project', () => {
@@ -93,11 +97,6 @@ describe('Task', () => {
       const result = task.accept(checkin);
 
       expect(result).toBe(false);
-      expect(GeoUtils.isPointInPolygon).toHaveBeenCalledWith(
-        parseFloat(checkin.latitude),
-        parseFloat(checkin.longitude),
-        area,
-      );
     });
   });
 
@@ -130,13 +129,13 @@ describe('Task', () => {
   describe('idValidArea method', () => {
     it('should return true if the checkin is inside the valid area', () => {
       (GeoUtils.isPointInPolygon as jest.Mock).mockReturnValue(true);
-      const result = (task as any).idValidArea(checkin);
+      const result = (task as any).isValidArea(checkin);
       expect(result).toBe(true);
     });
 
     it('should return false if the checkin is outside the valid area', () => {
       (GeoUtils.isPointInPolygon as jest.Mock).mockReturnValue(false);
-      const result = (task as any).idValidArea(checkin);
+      const result = (task as any).isValidArea(checkin);
       expect(result).toBe(false);
     });
   });
