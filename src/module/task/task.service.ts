@@ -18,7 +18,7 @@ export class TaskService {
 
   async create(createTaskDto: CreateTaskDto) {
     const project = await this.projectService.findOne(createTaskDto.projectId);
-    const area = project.areas.find((a) => a.name === createTaskDto.areaId);
+    const area = project.areas.find((a) => a.id === createTaskDto.areaId);
     if (!area) {
       throw new BadRequestException('Area not found');
     }

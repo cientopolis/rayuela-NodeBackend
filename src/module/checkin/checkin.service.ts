@@ -15,7 +15,7 @@ export class CheckinService {
   async create(createCheckinDto: CreateCheckinDto) {
     const task: Task = await this.taskService.findOne(createCheckinDto.taskId);
     const checkin = createCheckinDto.toDomain();
-    if (!task.accept(checkin)) {
+    if (task.accept(checkin)) {
       checkin.validateContribution();
     }
     return this.checkInDao.create(checkin);

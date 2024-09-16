@@ -1,6 +1,5 @@
-import { Task } from '../entities/task.entity';
+import { AreaGeoJSON, Task } from '../entities/task.entity';
 import { TaskTimeRestriction } from '../entities/time-restriction.entity';
-import { Polygon } from 'geojson';
 
 export class CreateTaskDto {
   name: string;
@@ -26,7 +25,7 @@ export class CreateTaskDto {
     this.checkinAmount = checkinAmount;
   }
 
-  toDomain(area: Polygon): Task {
+  toDomain(area: AreaGeoJSON): Task {
     return new Task(
       this.name,
       this.description,

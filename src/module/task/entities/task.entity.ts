@@ -1,7 +1,26 @@
 import { Checkin } from '../../checkin/entities/checkin.entity';
-import { Polygon } from 'geojson';
-import { GeoUtils } from '../geoUtils';
+import { GeoUtils } from '../utils/geoUtils';
 import { TaskTimeRestriction } from './time-restriction.entity';
+
+export interface AreaGeoJSON {
+  id: string;
+  type: 'Feature';
+  properties: FeatureProperties;
+  geometry: Geometry;
+}
+
+interface FeatureProperties {
+  cid: string;
+  pos: string;
+  gid: string;
+  source_object: string;
+  source_gna: string;
+}
+
+interface Geometry {
+  type: 'Polygon';
+  coordinates: number[][][]; // Array de coordenadas para el polígono
+}
 
 export class Task {
   get projectId(): string {
@@ -11,7 +30,7 @@ export class Task {
   #description: string;
   #projectId: string;
   #timeRestriction: TaskTimeRestriction;
-  #areaGeoJSON: Polygon;
+  #areaGeoJSON: AreaGeoJSON;
   #checkinAmount: number;
 
   constructor(
@@ -19,7 +38,7 @@ export class Task {
     description: string,
     projectId: string,
     timeRestriction: TaskTimeRestriction,
-    area: Polygon,
+    area: AreaGeoJSON,
     checkinAmount: number,
   ) {
     this.#name = name;
@@ -34,24 +53,39 @@ export class Task {
     const validations = [
       this.isSameProject(checkin),
       this.isValidTimeRestriction(checkin.date),
-      this.idValidArea(checkin),
+      this.isValidArea(checkin),
     ];
-    return validations.every(Boolean);
+    return validations.every((v) => v);
   }
 
   private isValidTimeRestriction(date: Date): boolean {
-    return this.#timeRestriction.satisfy(date);
+    const isValid = this.#timeRestriction.satisfy(date);
+    !isValid &&
+      console.log(
+        `[VALIDATION] Date ${date} is not valid for restriction: ${this.#timeRestriction}`,
+      );
+    return isValid;
   }
 
   private isSameProject(checkin: Checkin) {
-    return checkin.projectId === this.#projectId;
+    const isValid = checkin.projectId === this.#projectId;
+    !isValid &&
+      console.log(
+        `[VALIDATION] Projects mismatch between ${checkin.projectId} and ${this.#projectId}`,
+      );
+    return isValid;
   }
 
-  private idValidArea(checkin: Checkin) {
-    return GeoUtils.isPointInPolygon(
-      parseFloat(checkin.latitude),
+  private isValidArea(checkin: Checkin) {
+    const isValid = GeoUtils.isPointInPolygon(
       parseFloat(checkin.longitude),
-      this.#areaGeoJSON,
+      parseFloat(checkin.latitude),
+      this.#areaGeoJSON.geometry,
     );
+    !isValid &&
+      console.log(
+        `[VALIDATION] Point out of area ${checkin.latitude} ${checkin.longitude} and ${JSON.stringify(this.#areaGeoJSON.geometry)}`,
+      );
+    return isValid;
   }
 }

@@ -1,10 +1,10 @@
 import { Task } from './task.entity';
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { TaskTimeRestriction } from './time-restriction.entity';
-import { GeoUtils } from '../geoUtils';
+import { GeoUtils } from '../utils/geoUtils';
 import { Polygon } from 'geojson';
 
-jest.mock('../geoUtils'); // Mock de GeoUtils para controlar su comportamiento
+jest.mock('../utils/geoUtils'); // Mock de GeoUtils para controlar su comportamiento
 
 describe('Task', () => {
   let task: Task;

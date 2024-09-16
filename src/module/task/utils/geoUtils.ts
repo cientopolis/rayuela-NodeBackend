@@ -1,5 +1,6 @@
-import * as turf from '@turf/turf';
 import { Polygon } from 'geojson';
+import { point } from '@turf/helpers';
+import { booleanPointInPolygon } from '@turf/boolean-point-in-polygon';
 
 export class GeoUtils {
   static isPointInPolygon(
@@ -8,9 +9,11 @@ export class GeoUtils {
     polygonGeoJSON: Polygon,
   ): boolean {
     // Crear un punto con las coordenadas proporcionadas
-    const point = turf.point([longitude, latitude]);
+    const mapPoint = point([longitude, latitude]);
 
     // Verificar si el punto está dentro del polígono
-    return turf.booleanPointInPolygon(point, polygonGeoJSON);
+    return booleanPointInPolygon(mapPoint, polygonGeoJSON, {
+      ignoreBoundary: false,
+    });
   }
 }

@@ -65,7 +65,7 @@ export class ProjectController {
 
   @Post('init')
   init() {
-    const projects = [
+    const projects: CreateProjectDto[] = [
       {
         name: 'Anticipando la crecida',
         description:
@@ -75,11 +75,14 @@ export class ProjectController {
         available: true,
         areas: [
           {
-            name: 'area 0',
+            id: 'area 0',
             type: 'Feature',
             properties: {
-              Ciudad: 'La Plata',
-              AreaAInterceptar: 'Bosque de la Plata',
+              cid: '0',
+              pos: 'left',
+              gid: '264890',
+              source_object: 'Acueducto',
+              source_gna: 'Acueducto',
             },
             geometry: {
               type: 'Polygon',
@@ -105,11 +108,14 @@ export class ProjectController {
         available: true,
         areas: [
           {
-            name: 'area 1',
+            id: 'area 1',
             type: 'Feature',
             properties: {
-              Ciudad: 'Buenos Aires',
-              AreaAInterceptar: 'Palermo',
+              cid: '1',
+              pos: 'left',
+              gid: '264891',
+              source_object: 'Palermo',
+              source_gna: 'Buenos Aires',
             },
             geometry: {
               type: 'Polygon',
@@ -135,11 +141,14 @@ export class ProjectController {
         available: false,
         areas: [
           {
-            name: 'area 2',
+            id: 'area 2',
             type: 'Feature',
             properties: {
-              Ciudad: 'CABA',
-              AreaAInterceptar: 'Recoleta',
+              cid: '2',
+              pos: 'left',
+              gid: '264892',
+              source_object: 'Recoleta',
+              source_gna: 'CABA',
             },
             geometry: {
               type: 'Polygon',
@@ -165,11 +174,14 @@ export class ProjectController {
         available: true,
         areas: [
           {
-            name: 'area 3',
+            id: 'area 3',
             type: 'Feature',
             properties: {
-              Ciudad: 'Bahía Blanca',
-              AreaAInterceptar: 'Río Colorado',
+              cid: '3',
+              pos: 'left',
+              gid: '264893',
+              source_object: 'Río Colorado',
+              source_gna: 'Bahía Blanca',
             },
             geometry: {
               type: 'Polygon',
@@ -195,11 +207,14 @@ export class ProjectController {
         available: true,
         areas: [
           {
-            name: 'area 4',
+            id: 'area 4',
             type: 'Feature',
             properties: {
-              Ciudad: 'Mendoza',
-              AreaAInterceptar: 'Cordillera de los Andes',
+              cid: '4',
+              pos: 'left',
+              gid: '264894',
+              source_object: 'Cordillera de los Andes',
+              source_gna: 'Mendoza',
             },
             geometry: {
               type: 'Polygon',
@@ -225,11 +240,14 @@ export class ProjectController {
         available: true,
         areas: [
           {
-            name: 'area 5',
+            id: 'area 5',
             type: 'Feature',
             properties: {
-              Ciudad: 'Rosario',
-              AreaAInterceptar: 'Zona Norte',
+              cid: '5',
+              pos: 'left',
+              gid: '264895',
+              source_object: 'Zona Norte',
+              source_gna: 'Rosario',
             },
             geometry: {
               type: 'Polygon',
@@ -255,11 +273,14 @@ export class ProjectController {
         available: false,
         areas: [
           {
-            name: 'area 6',
+            id: 'area 6',
             type: 'Feature',
             properties: {
-              Ciudad: 'San Fernando del Valle de Catamarca',
-              AreaAInterceptar: 'Embalse El Jumeal',
+              cid: '6',
+              pos: 'left',
+              gid: '264896',
+              source_object: 'Embalse El Jumeal',
+              source_gna: 'San Fernando del Valle de Catamarca',
             },
             geometry: {
               type: 'Polygon',

@@ -22,8 +22,7 @@ export class TaskDao {
 
   async getTaskById(taskId: string): Promise<Task> {
     const res = await this.taskModel.findById(taskId).exec();
-    const response = await this.mapDocToTask(res['_doc']);
-    return response;
+    return await this.mapDocToTask(res['_doc']);
   }
 
   async getAllTasks(): Promise<TaskDocument[]> {
@@ -52,7 +51,7 @@ export class TaskDao {
 
   private async mapDocToTask(doc: TaskDocument) {
     const project = await this.projectDao.findOne(doc.projectId.toString());
-    const area = project.areas.find((p) => p.name === doc.areaId);
+    const area = project.areas.find((a) => a.id === doc.areaId);
     if (!area) {
       throw new NotFoundException('Area not found');
     }
