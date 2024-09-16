@@ -33,6 +33,9 @@ export class TaskSchemaTemplate {
   @Prop({ required: true, min: 1 })
   checkinAmount: number;
 
+  @Prop({ required: true })
+  type: string;
+
   static collectionName() {
     return 'Task';
   }

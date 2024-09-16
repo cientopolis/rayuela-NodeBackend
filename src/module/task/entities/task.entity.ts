@@ -32,6 +32,7 @@ export class Task {
   #timeRestriction: TaskTimeRestriction;
   #areaGeoJSON: AreaGeoJSON;
   #checkinAmount: number;
+  #type: string;
 
   constructor(
     name: string,
@@ -40,6 +41,7 @@ export class Task {
     timeRestriction: TaskTimeRestriction,
     area: AreaGeoJSON,
     checkinAmount: number,
+    type: string,
   ) {
     this.#name = name;
     this.#description = description;
@@ -47,6 +49,7 @@ export class Task {
     this.#timeRestriction = timeRestriction;
     this.#areaGeoJSON = area;
     this.#checkinAmount = checkinAmount;
+    this.#type = type;
   }
 
   accept(checkin: Checkin) {

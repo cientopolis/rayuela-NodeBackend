@@ -18,6 +18,9 @@ export class TaskService {
 
   async create(createTaskDto: CreateTaskDto) {
     const project = await this.projectService.findOne(createTaskDto.projectId);
+    if (!project.taskTypes.includes(createTaskDto.type)) {
+      throw new BadRequestException('Task type is invalid');
+    }
     const area = project.areas.find((a) => a.id === createTaskDto.areaId);
     if (!area) {
       throw new BadRequestException('Area not found');

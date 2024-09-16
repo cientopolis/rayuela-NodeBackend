@@ -23,6 +23,9 @@ export class ProjectTemplate {
   @Prop({ type: [MongooseSchema.Types.Mixed], default: [] }) // Permite cualquier tipo
   areas: any[];
 
+  @Prop({ type: [String], default: [] })
+  taskTypes: string[];
+
   static collectionName() {
     return 'Projects';
   }

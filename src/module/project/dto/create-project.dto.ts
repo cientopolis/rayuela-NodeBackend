@@ -7,4 +7,5 @@ export class CreateProjectDto {
   web?: string;
   available: boolean;
   areas: AreaGeoJSON[];
+  taskTypes: string[];
 }

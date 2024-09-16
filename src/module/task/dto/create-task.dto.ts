@@ -8,6 +8,7 @@ export class CreateTaskDto {
   timeRestriction: TaskTimeRestriction;
   areaId: string;
   checkinAmount: number;
+  type: string;
 
   constructor({
     name,
@@ -16,6 +17,7 @@ export class CreateTaskDto {
     timeRestriction,
     areaId,
     checkinAmount,
+    type,
   }) {
     this.name = name;
     this.description = description;
@@ -23,6 +25,7 @@ export class CreateTaskDto {
     this.timeRestriction = timeRestriction;
     this.areaId = areaId;
     this.checkinAmount = checkinAmount;
+    this.type = type;
   }
 
   toDomain(area: AreaGeoJSON): Task {
@@ -33,6 +36,7 @@ export class CreateTaskDto {
       this.timeRestriction,
       area,
       this.checkinAmount,
+      this.type,
     );
   }
 
@@ -43,6 +47,7 @@ export class CreateTaskDto {
     timeRestriction,
     areaId,
     checkinAmount,
+    type,
   }) {
     return new CreateTaskDto({
       name,
@@ -51,6 +56,7 @@ export class CreateTaskDto {
       timeRestriction,
       areaId,
       checkinAmount,
+      type,
     });
   }
 }

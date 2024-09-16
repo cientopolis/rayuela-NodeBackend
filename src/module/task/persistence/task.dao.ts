@@ -62,6 +62,7 @@ export class TaskDao {
       this.mapTimeRestriction(doc.timeRestriction),
       area,
       doc.checkinAmount,
+      doc.type,
     );
   }
 

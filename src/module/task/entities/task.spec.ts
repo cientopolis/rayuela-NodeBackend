@@ -47,6 +47,7 @@ describe('Task', () => {
       taskTimeRestriction,
       area,
       3,
+      'type',
     );
 
     checkin = new Checkin(

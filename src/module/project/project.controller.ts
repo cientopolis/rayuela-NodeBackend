@@ -39,7 +39,7 @@ export class ProjectController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.Admin)
   @Post()
-  create(@Request() req, @Body() createProjectDto: CreateProjectDto) {
+  create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectService.create(createProjectDto);
   }
 
@@ -98,9 +98,11 @@ export class ProjectController {
             },
           },
         ],
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
       },
       {
         name: 'GeoVin',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Estudio de enfermedades transmitidas por vectores (animales transmisores). Proveer de herramientas interactivas, educativas, lúdicas y gratuitas a personas usuarias no especializadas, que permitan contribuir a la problemática relacionada con las vinchucas en todo el país. Fomentar la concientización acerca de la problemática de salud relacionada con la Enfermedad de Chagas, involucrando a la ciudadanía en el monitoreo de su vector.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
@@ -134,6 +136,7 @@ export class ProjectController {
       },
       {
         name: 'Caza Mosquitos',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Estudio de enfermedades transmitidas por vectores (animales transmisores). Estudiar la distribución de mosquitos vectores de enfermedades, incluido el Aedes aegypti, vector de los virus dengue, zika, chikungunya y fiebre amarilla. Involucrar a la ciudadanía en el análisis y cuestionamiento de su entorno, tomando acciones individuales para contribuir con la prevención de la propagación del insecto vector.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
@@ -167,6 +170,7 @@ export class ProjectController {
       },
       {
         name: 'PreserVamos',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Monitoreo ambiental de ecosistemas acuáticos de agua dulce. PreserVamos es una iniciativa del Laboratorio de Aceleración del Programa para el Desarrollo de Naciones Unidas (PNUD) junto con el proyecto de ciencia participativa AppEAR, y diferentes municipios de la provincia de Buenos Aires para estudiar los ambientes acuáticos de agua dulce.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
@@ -200,6 +204,7 @@ export class ProjectController {
       },
       {
         name: 'ArgentiNat.org',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Biodiversidad. Conocer más acerca de los ciclos de vida, la distribución y la dinámica poblacional de todas las especies que habitan en Argentina.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
@@ -233,6 +238,7 @@ export class ProjectController {
       },
       {
         name: 'Mi habitat',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Saneamiento y gestión de residuos; enfermedades transmitidas por vectores. Concientizar a las personas jóvenes y a los núcleos familiares sobre los riesgos sanitarios que representan los basurales, roedores y parásitos en sus comunidades. Impulsar, junto con la comunidad educativa, a los barrios en situación de mayor vulnerabilidad (debido a este tipo de contaminación) a generar acciones que mejoren su calidad de vida.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
@@ -266,6 +272,7 @@ export class ProjectController {
       },
       {
         name: 'Cyano',
+        taskTypes: ['Sacar fotos', 'Llenar formularios'],
         description:
           'Eutrofización de cuerpos de agua y cianobacterias. Se aborda la eutrofización de cuerpos de agua superficiales de manera interrelacionada con su cuenca de aporte, los diferentes usos del agua y el Cianosemáforo, para la prevención del riesgo en aguas de uso recreativo.',
         image: 'rayuelaApp/static/project_image/rio.jpg',
