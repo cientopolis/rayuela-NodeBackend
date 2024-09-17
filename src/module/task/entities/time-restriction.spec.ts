@@ -1,10 +1,10 @@
-import { TaskTimeRestriction } from './time-restriction.entity';
+import { TimeInterval } from './time-restriction.entity';
 
 describe('TaskTimeRestriction', () => {
-  let taskTimeRestriction: TaskTimeRestriction;
+  let taskTimeRestriction: TimeInterval;
 
   beforeEach(() => {
-    taskTimeRestriction = new TaskTimeRestriction([1, 3, 5], {
+    taskTimeRestriction = new TimeInterval('', [1, 3, 5], {
       start: 13,
       end: 19,
     }); // Lunes, Miércoles y Viernes de 13 a 19

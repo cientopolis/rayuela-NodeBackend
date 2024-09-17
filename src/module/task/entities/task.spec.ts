@@ -1,18 +1,18 @@
 import { AreaGeoJSON, Task } from './task.entity';
 import { Checkin } from '../../checkin/entities/checkin.entity';
-import { TaskTimeRestriction } from './time-restriction.entity';
+import { TimeInterval } from './time-restriction.entity';
 import { GeoUtils } from '../utils/geoUtils';
 
 jest.mock('../utils/geoUtils'); // Mock de GeoUtils para controlar su comportamiento
 
 describe('Task', () => {
   let task: Task;
-  let taskTimeRestriction: TaskTimeRestriction;
+  let taskTimeRestriction: TimeInterval;
   let area: AreaGeoJSON;
   let checkin: Checkin;
 
   beforeEach(() => {
-    taskTimeRestriction = new TaskTimeRestriction([1, 3, 5], {
+    taskTimeRestriction = new TimeInterval('', [1, 3, 5], {
       start: 13,
       end: 19,
     }); // Lunes, Miércoles y Viernes de 13 a 19

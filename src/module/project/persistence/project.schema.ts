@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 export type ProjectDocument = ProjectTemplate & Document;
 
@@ -25,6 +26,21 @@ export class ProjectTemplate {
 
   @Prop({ type: [String], default: [] })
   taskTypes: string[];
+
+  @Prop({
+    required: true,
+    type: [
+      {
+        name: { type: String, required: true },
+        days: { type: [Number], required: true }, // Lista de números para los días (1 a 7)
+        time: {
+          start: { type: Number, required: true, min: 0, max: 23 }, // Hora de inicio
+          end: { type: Number, required: true, min: 0, max: 23 }, // Hora de fin
+        },
+      },
+    ],
+  })
+  timeIntervals: TimeInterval[];
 
   static collectionName() {
     return 'Projects';

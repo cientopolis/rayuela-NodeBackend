@@ -1,6 +1,6 @@
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { GeoUtils } from '../utils/geoUtils';
-import { TaskTimeRestriction } from './time-restriction.entity';
+import { TimeInterval } from './time-restriction.entity';
 
 export interface AreaGeoJSON {
   id: string;
@@ -29,7 +29,7 @@ export class Task {
   #name: string;
   #description: string;
   #projectId: string;
-  #timeRestriction: TaskTimeRestriction;
+  #timeInterval: TimeInterval;
   #areaGeoJSON: AreaGeoJSON;
   #checkinAmount: number;
   #type: string;
@@ -38,7 +38,7 @@ export class Task {
     name: string,
     description: string,
     projectId: string,
-    timeRestriction: TaskTimeRestriction,
+    timeRestriction: TimeInterval,
     area: AreaGeoJSON,
     checkinAmount: number,
     type: string,
@@ -46,7 +46,7 @@ export class Task {
     this.#name = name;
     this.#description = description;
     this.#projectId = projectId;
-    this.#timeRestriction = timeRestriction;
+    this.#timeInterval = timeRestriction;
     this.#areaGeoJSON = area;
     this.#checkinAmount = checkinAmount;
     this.#type = type;
@@ -62,10 +62,10 @@ export class Task {
   }
 
   private isValidTimeRestriction(date: Date): boolean {
-    const isValid = this.#timeRestriction.satisfy(date);
+    const isValid = this.#timeInterval.satisfy(date);
     !isValid &&
       console.log(
-        `[VALIDATION] Date ${date} is not valid for restriction: ${this.#timeRestriction}`,
+        `[VALIDATION] Date ${date} is not valid for restriction: ${this.#timeInterval}`,
       );
     return isValid;
   }

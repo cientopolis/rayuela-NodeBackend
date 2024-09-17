@@ -5,7 +5,8 @@ import { TaskDocument, TaskSchemaTemplate } from './task.schema';
 import { Task } from '../entities/task.entity';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { ProjectDao } from '../../project/persistence/project.dao';
-import { TaskTimeRestriction } from '../entities/time-restriction.entity';
+import { TimeInterval } from '../entities/time-restriction.entity';
+import { ProjectTemplate } from '../../project/persistence/project.schema';
 
 @Injectable()
 export class TaskDao {
@@ -59,14 +60,18 @@ export class TaskDao {
       doc.name,
       doc.description,
       doc.projectId.toString(),
-      this.mapTimeRestriction(doc.timeRestriction),
+      this.mapTimeRestriction(doc.timeIntervalId, project),
       area,
       doc.checkinAmount,
       doc.type,
     );
   }
 
-  private mapTimeRestriction(timeRestriction): TaskTimeRestriction {
-    return new TaskTimeRestriction(timeRestriction.days, timeRestriction.time);
+  private mapTimeRestriction(
+    timeIntervalId,
+    project: ProjectTemplate,
+  ): TimeInterval {
+    const ti = project.timeIntervals.find((t) => t.name === timeIntervalId);
+    return new TimeInterval(ti.name, ti.days, ti.time);
   }
 }

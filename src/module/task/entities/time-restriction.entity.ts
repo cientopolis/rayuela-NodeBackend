@@ -1,4 +1,5 @@
-export class TaskTimeRestriction {
+export class TimeInterval {
+  name: string;
   days: number[]; // From 1 to 7
   time: {
     // Between 00 and 23
@@ -19,7 +20,11 @@ export class TaskTimeRestriction {
     return isValidDay && isValidHour;
   }
 
-  constructor(days: number[], time: { start: number; end: number }) {
+  constructor(
+    name: string,
+    days: number[],
+    time: { start: number; end: number },
+  ) {
     this.days = days;
     this.time = time;
   }
