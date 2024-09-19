@@ -49,7 +49,6 @@ export class ProjectController {
     return this.projectService.create(createProjectDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projectService.findOne(id);
