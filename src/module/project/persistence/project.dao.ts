@@ -41,8 +41,11 @@ export class ProjectDao {
     return updatedProject;
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.projectModel.findByIdAndDelete(id).exec();
+  async toggleAvailable(id: string): Promise<void> {
+    const prev = await this.findOne(id);
+    const result = await this.projectModel
+      .findByIdAndUpdate(id, { available: !prev.available })
+      .exec();
     if (!result) {
       throw new NotFoundException('Project not found');
     }

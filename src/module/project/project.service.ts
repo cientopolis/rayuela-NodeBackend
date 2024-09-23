@@ -27,8 +27,8 @@ export class ProjectService {
     return this.projectDao.update(id, updateProjectDto);
   }
 
-  async remove(id: string): Promise<void> {
-    return this.projectDao.remove(id);
+  async toggleAvailable(id: string): Promise<void> {
+    return this.projectDao.toggleAvailable(id);
   }
 
   async getTaskCombinations(id: string) {

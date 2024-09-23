@@ -63,9 +63,9 @@ export class ProjectController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.Admin)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectService.remove(id);
+  @Post('/availability/:id')
+  toggleAvailable(@Param('id') id: string) {
+    return this.projectService.toggleAvailable(id);
   }
 
   @Post('init')
