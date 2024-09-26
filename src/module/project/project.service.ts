@@ -42,6 +42,7 @@ export class ProjectService {
         project.timeIntervals.forEach((timeInterval) => {
           combinations.push([
             new Task(
+              'id',
               `T${combinations.length + 1}`,
               '',
               id,

@@ -32,6 +32,10 @@ export class TaskService {
     return await this.taskDao.getAllTasks();
   }
 
+  async findByProjectId(projectId: string): Promise<Task[]> {
+    return await this.taskDao.getTasksByProject(projectId);
+  }
+
   async findOne(id: string): Promise<Task> {
     const task: Task = await this.taskDao.getTaskById(id);
     if (!task) {

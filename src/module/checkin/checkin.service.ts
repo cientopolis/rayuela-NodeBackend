@@ -13,11 +13,12 @@ export class CheckinService {
   ) {}
 
   async create(createCheckinDto: CreateCheckinDto) {
-    const task: Task = await this.taskService.findOne(createCheckinDto.taskId);
+    const tasks: Task[] = await this.taskService.findByProjectId(
+      createCheckinDto.projectId,
+    );
     const checkin = createCheckinDto.toDomain();
-    if (task.accept(checkin)) {
-      checkin.validateContribution();
-    }
+    const contributionTask = tasks.find((task) => task.accept(checkin));
+    checkin.validateContribution(contributionTask?.getId() || '');
     return this.checkInDao.create(checkin);
   }
 

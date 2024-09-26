@@ -57,8 +57,7 @@ export class CheckInDao {
       checkin.date,
       checkin.projectId,
       checkin.userId,
-      checkin.taskId,
-      checkin.canContribute,
+      checkin.contributesTo,
     );
   }
 }

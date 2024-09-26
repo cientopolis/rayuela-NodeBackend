@@ -41,6 +41,7 @@ describe('Task', () => {
     }; // Área simulada en formato GeoJSON
 
     task = new Task(
+      'id',
       'Test Task',
       'Test Description',
       'project123',
@@ -56,7 +57,6 @@ describe('Task', () => {
       new Date('2024-09-16T15:00:00'),
       'project123',
       'user123',
-      'task123',
     );
   });
 

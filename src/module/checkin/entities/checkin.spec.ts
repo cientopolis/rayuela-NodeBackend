@@ -7,17 +7,9 @@ describe('Checkin Class', () => {
   const datetime = new Date('2024-09-14T12:00:00Z');
   const projectId = 'project123';
   const userId = 'user123';
-  const taskId = 'task123';
 
   beforeEach(() => {
-    checkin = new Checkin(
-      latitude,
-      longitude,
-      datetime,
-      projectId,
-      userId,
-      taskId,
-    );
+    checkin = new Checkin(latitude, longitude, datetime, projectId, userId);
   });
 
   it('should initialize with correct values', () => {
@@ -26,8 +18,6 @@ describe('Checkin Class', () => {
     expect(checkin.date).toBe(datetime);
     expect(checkin.projectId).toBe(projectId);
     expect(checkin.userId).toBe(userId);
-    expect(checkin.taskId).toBe(taskId);
-    expect(checkin.canContribute).toBe(false); // Por defecto, canContribute debería ser false
   });
 
   it('should return the correct latitude and longitude', () => {
@@ -42,12 +32,5 @@ describe('Checkin Class', () => {
   it('should return the correct projectId, userId, and taskId', () => {
     expect(checkin.projectId).toBe(projectId);
     expect(checkin.userId).toBe(userId);
-    expect(checkin.taskId).toBe(taskId);
-  });
-
-  it('should allow contribution after validateContribution is called', () => {
-    expect(checkin.canContribute).toBe(false); // Por defecto debería ser false
-    checkin.validateContribution();
-    expect(checkin.canContribute).toBe(true); // Después de llamar a validateContribution, debería ser true
   });
 });

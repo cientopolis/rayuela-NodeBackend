@@ -5,11 +5,8 @@ export class Checkin {
   set projectId(value: string) {
     this.#projectId = value;
   }
-  get canContribute(): boolean {
-    return this.#canContribute;
-  }
-  get taskId(): string {
-    return this.#taskId;
+  get contributesTo(): string {
+    return this.#contributesTo;
   }
   get userId(): string {
     return this.#userId;
@@ -31,8 +28,7 @@ export class Checkin {
   #date: Date;
   #projectId: string;
   #userId: string;
-  #taskId: string;
-  #canContribute: boolean;
+  #contributesTo: string;
 
   constructor(
     latitude: string,
@@ -40,18 +36,16 @@ export class Checkin {
     datetime: Date,
     projectId: string,
     userId: string,
-    taskId: string,
   ) {
     this.#latitude = latitude;
     this.#longitude = longitude;
     this.#date = datetime;
     this.#projectId = projectId;
     this.#userId = userId;
-    this.#taskId = taskId;
-    this.#canContribute = false;
+    this.#contributesTo = '';
   }
 
-  validateContribution(): void {
-    this.#canContribute = true;
+  validateContribution(id: string): void {
+    this.#contributesTo = id;
   }
 }

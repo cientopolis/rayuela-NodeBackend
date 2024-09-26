@@ -26,6 +26,10 @@ export class Task {
   get projectId(): string {
     return this.#projectId;
   }
+  getId(): string {
+    return this.#_id;
+  }
+  #_id: string;
   #name: string;
   #description: string;
   #projectId: string;
@@ -35,6 +39,7 @@ export class Task {
   #type: string;
 
   constructor(
+    id: string,
     name: string,
     description: string,
     projectId: string,
@@ -43,6 +48,7 @@ export class Task {
     checkinAmount: number,
     type: string,
   ) {
+    this.#_id = id;
     this.#name = name;
     this.#description = description;
     this.#projectId = projectId;

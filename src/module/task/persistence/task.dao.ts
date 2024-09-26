@@ -30,6 +30,20 @@ export class TaskDao {
     return this.taskModel.find().exec();
   }
 
+  async getTasksByProject(projectId: string): Promise<Task[]> {
+    const tasks: TaskDocument[] = await this.taskModel
+      .find({ projectId })
+      .exec();
+    if (!tasks || tasks.length === 0) {
+      throw new NotFoundException('No tasks found for this project');
+    }
+    const res = [];
+    for (const task of tasks) {
+      res.push(await this.mapDocToTask(task));
+    }
+    return res;
+  }
+
   async updateTask(
     taskId: string,
     taskData: any,
@@ -50,13 +64,14 @@ export class TaskDao {
     return this.taskModel.findOne({ $or: [{ name }, { description }] }).exec();
   }
 
-  private async mapDocToTask(doc: TaskDocument) {
+  private async mapDocToTask(doc: TaskDocument): Promise<Task> {
     const project = await this.projectDao.findOne(doc.projectId.toString());
     const area = project.areas.find((a) => a.id === doc.areaId);
     if (!area) {
       throw new NotFoundException('Area not found');
     }
     return new Task(
+      doc._id,
       doc.name,
       doc.description,
       doc.projectId.toString(),

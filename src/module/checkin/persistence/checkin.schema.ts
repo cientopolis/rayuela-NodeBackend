@@ -20,11 +20,8 @@ export class CheckInTemplate {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Task', required: true })
-  taskId: Types.ObjectId;
-
-  @Prop({ required: true, type: Boolean })
-  canContribute: boolean;
+  @Prop({ type: String })
+  contributesTo: string;
 
   constructor(
     latitude: string,
@@ -32,16 +29,14 @@ export class CheckInTemplate {
     datetime: Date,
     projectId: string,
     userId: string,
-    taskId: string,
-    canContribute: boolean,
+    contributesTo: string,
   ) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.datetime = datetime;
     this.projectId = new Types.ObjectId(projectId);
     this.userId = new Types.ObjectId(userId);
-    this.taskId = new Types.ObjectId(taskId);
-    this.canContribute = canContribute;
+    this.contributesTo = contributesTo;
   }
 
   static collectionName() {

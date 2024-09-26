@@ -28,7 +28,6 @@ export class CheckinController {
         longitude: createCheckinDto.longitude,
         datetime: createCheckinDto.datetime,
         projectId: createCheckinDto.projectId,
-        taskId: createCheckinDto.taskId,
         userId: userId,
       }),
     );

@@ -6,13 +6,11 @@ export class CreateCheckinDto {
   datetime: Date;
   projectId: string;
   userId: string;
-  taskId: string;
 
-  constructor({ datetime, latitude, projectId, userId, taskId, longitude }) {
+  constructor({ datetime, latitude, projectId, userId, longitude }) {
     this.datetime = datetime;
     this.latitude = latitude;
     this.longitude = longitude;
-    this.taskId = taskId;
     this.userId = userId;
     this.projectId = projectId;
   }
@@ -24,7 +22,6 @@ export class CreateCheckinDto {
       this.datetime,
       this.projectId,
       this.userId,
-      this.taskId,
     );
   }
 }
