@@ -1,6 +1,8 @@
 export class TimeInterval {
   name: string;
-  days: number[]; // From 1 to 7
+  days: number[]; // From 1(Mon) to 7(Sun)
+  startDate: Date;
+  endDate: Date;
   time: {
     // Between 00 and 23
     start: number;
@@ -14,17 +16,23 @@ export class TimeInterval {
     const hour = datetime.getHours();
 
     const isValidDay = this.days.includes(dayOfWeek);
-
     const isValidHour = hour >= this.time.start && hour < this.time.end;
 
-    return isValidDay && isValidHour;
+    const isWithinDateRange =
+      datetime >= this.startDate && datetime <= this.endDate;
+
+    return isValidDay && isValidHour && isWithinDateRange;
   }
 
   constructor(
     name: string,
     days: number[],
     time: { start: number; end: number },
+    startDate: Date,
+    endDate: Date,
   ) {
+    this.startDate = startDate;
+    this.endDate = endDate;
     this.days = days;
     this.time = time;
   }

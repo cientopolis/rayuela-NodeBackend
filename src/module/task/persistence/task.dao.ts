@@ -87,6 +87,12 @@ export class TaskDao {
     project: ProjectTemplate,
   ): TimeInterval {
     const ti = project.timeIntervals.find((t) => t.name === timeIntervalId);
-    return new TimeInterval(ti.name, ti.days, ti.time);
+    return new TimeInterval(
+      ti.name,
+      ti.days,
+      ti.time,
+      ti.startDate,
+      ti.endDate,
+    );
   }
 }

@@ -4,24 +4,14 @@ export class CreateTaskDto {
   projectId: string;
   timeIntervalId: string;
   areaId: string;
-  checkinAmount: number;
   type: string;
 
-  constructor({
-    name,
-    description,
-    projectId,
-    timeIntervalId,
-    areaId,
-    checkinAmount,
-    type,
-  }) {
+  constructor({ name, description, projectId, timeIntervalId, areaId, type }) {
     this.name = name;
     this.description = description;
     this.projectId = projectId;
     this.timeIntervalId = timeIntervalId;
     this.areaId = areaId;
-    this.checkinAmount = checkinAmount;
     this.type = type;
   }
 
@@ -31,7 +21,6 @@ export class CreateTaskDto {
     projectId,
     timeIntervalId,
     areaId,
-    checkinAmount,
     type,
   }) {
     return new CreateTaskDto({
@@ -40,7 +29,6 @@ export class CreateTaskDto {
       projectId,
       timeIntervalId,
       areaId,
-      checkinAmount,
       type,
     });
   }

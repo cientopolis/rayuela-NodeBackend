@@ -1,4 +1,3 @@
-import { AreaGeoJSON } from '../../task/entities/task.entity';
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 export class CreateProjectDto {
@@ -7,7 +6,7 @@ export class CreateProjectDto {
   image: string;
   web?: string;
   available: boolean;
-  areas: AreaGeoJSON[];
+  areas: any;
   taskTypes: string[];
   timeIntervals: TimeInterval[];
 }

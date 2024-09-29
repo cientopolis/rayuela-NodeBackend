@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectDao } from './persistence/project.dao';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectTemplate } from './persistence/project.schema';
-import { Task } from '../task/entities/task.entity';
 
 @Injectable()
 export class ProjectService {
@@ -32,7 +31,7 @@ export class ProjectService {
   }
 
   async getTaskCombinations(id: string) {
-    const project = await this.projectDao.findOne(id);
+    const project: ProjectTemplate = await this.projectDao.findOne(id);
     if (!project) {
       throw new NotFoundException('Project not Found');
     }
@@ -41,19 +40,19 @@ export class ProjectService {
       project.taskTypes.forEach((type) => {
         project.timeIntervals.forEach((timeInterval) => {
           combinations.push([
-            new Task(
-              'id',
-              `T${combinations.length + 1}`,
-              '',
+            {
               id,
+              name: `T${combinations.length + 1}`,
+              description: `T${combinations.length + 1}`,
+              projectId: id,
               timeInterval,
               area,
-              1,
               type,
-            ),
+            },
           ]);
         });
       });
     });
+    return combinations;
   }
 }

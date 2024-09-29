@@ -21,8 +21,8 @@ export class ProjectTemplate {
   @Prop({ required: true })
   available: boolean;
 
-  @Prop({ type: [MongooseSchema.Types.Mixed], default: [] }) // Permite cualquier tipo
-  areas: any[];
+  @Prop({ type: MongooseSchema.Types.Mixed, default: {} }) // Permite cualquier tipo
+  areas: any;
 
   @Prop({ type: [String], default: [] })
   taskTypes: string[];
@@ -37,6 +37,8 @@ export class ProjectTemplate {
           start: { type: Number, required: true, min: 0, max: 23 }, // Hora de inicio
           end: { type: Number, required: true, min: 0, max: 23 }, // Hora de fin
         },
+        startDate: { type: Date, required: true },
+        endDate: { type: Date, required: true },
       },
     ],
   })
