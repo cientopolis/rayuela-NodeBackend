@@ -12,10 +12,16 @@ describe('Task', () => {
   let checkin: Checkin;
 
   beforeEach(() => {
-    taskTimeRestriction = new TimeInterval('', [1, 3, 5], {
-      start: 13,
-      end: 19,
-    }); // Lunes, Miércoles y Viernes de 13 a 19
+    taskTimeRestriction = new TimeInterval(
+      '',
+      [1, 3, 5],
+      {
+        start: 13,
+        end: 19,
+      },
+      new Date('01/01/2024'),
+      new Date('12/31/2024'),
+    ); // Lunes, Miércoles y Viernes de 13 a 19
     area = {
       type: 'Feature',
       properties: {
