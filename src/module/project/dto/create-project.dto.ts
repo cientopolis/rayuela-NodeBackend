@@ -9,4 +9,5 @@ export class CreateProjectDto {
   areas: any;
   taskTypes: string[];
   timeIntervals: TimeInterval[];
+  ownerId: string;
 }

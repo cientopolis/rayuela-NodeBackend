@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 export type ProjectDocument = ProjectTemplate & Document;
@@ -43,6 +43,9 @@ export class ProjectTemplate {
     ],
   })
   timeIntervals: TimeInterval[];
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  ownerId: string;
 
   static collectionName() {
     return 'Projects';
