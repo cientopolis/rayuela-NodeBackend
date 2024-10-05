@@ -28,9 +28,9 @@ export class TaskController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get()
-  findAll() {
-    return this.taskService.findAll();
+  @Get('/project/:id')
+  findAllByProject(@Param('id') projectId: string) {
+    return this.taskService.findByProjectId(projectId);
   }
 
   @UseGuards(JwtAuthGuard)

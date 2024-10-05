@@ -28,10 +28,6 @@ export class TaskService {
     return await this.taskDao.create(createTaskDto);
   }
 
-  async findAll() {
-    return await this.taskDao.getAllTasks();
-  }
-
   async findByProjectId(projectId: string): Promise<Task[]> {
     return await this.taskDao.getTasksByProject(projectId);
   }

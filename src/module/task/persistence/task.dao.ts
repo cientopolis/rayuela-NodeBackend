@@ -34,7 +34,7 @@ export class TaskDao {
     const tasks: TaskDocument[] = await this.taskModel
       .find({ projectId })
       .exec();
-    if (!tasks || tasks.length === 0) {
+    if (!tasks) {
       throw new NotFoundException('No tasks found for this project');
     }
     const res = [];
