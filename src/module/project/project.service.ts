@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectDao } from './persistence/project.dao';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectTemplate } from './persistence/project.schema';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectService {
@@ -21,7 +22,7 @@ export class ProjectService {
 
   async update(
     id: string,
-    updateProjectDto: CreateProjectDto,
+    updateProjectDto: UpdateProjectDto,
   ): Promise<ProjectTemplate> {
     return this.projectDao.update(id, updateProjectDto);
   }

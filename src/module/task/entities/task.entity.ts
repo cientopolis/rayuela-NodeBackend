@@ -35,7 +35,6 @@ export class Task {
   #projectId: string;
   #timeInterval: TimeInterval;
   #areaGeoJSON: AreaGeoJSON;
-  #checkinAmount: number;
   #type: string;
 
   constructor(
@@ -45,7 +44,6 @@ export class Task {
     projectId: string,
     timeRestriction: TimeInterval,
     area: AreaGeoJSON,
-    checkinAmount: number,
     type: string,
   ) {
     this.#_id = id;
@@ -54,7 +52,6 @@ export class Task {
     this.#projectId = projectId;
     this.#timeInterval = timeRestriction;
     this.#areaGeoJSON = area;
-    this.#checkinAmount = checkinAmount;
     this.#type = type;
   }
 

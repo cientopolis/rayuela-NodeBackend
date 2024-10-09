@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectTemplate, ProjectDocument } from './project.schema';
 import { CreateProjectDto } from '../dto/create-project.dto';
+import { UpdateProjectDto } from '../dto/update-project.dto';
 
 @Injectable()
 export class ProjectDao {
@@ -30,14 +31,16 @@ export class ProjectDao {
 
   async update(
     id: string,
-    updateProjectDto: CreateProjectDto,
+    updateProjectDto: UpdateProjectDto,
   ): Promise<ProjectTemplate> {
     const updatedProject = await this.projectModel
-      .findByIdAndUpdate(id, updateProjectDto, { new: true })
+      .findByIdAndUpdate(id, { $set: updateProjectDto }, { new: true })
       .exec();
+
     if (!updatedProject) {
       throw new NotFoundException('Project not found');
     }
+
     return updatedProject;
   }
 

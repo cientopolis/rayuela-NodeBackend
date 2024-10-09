@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { UserRole } from '../auth/users/user.schema';
@@ -16,6 +17,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectService } from './project.service';
 import { UserService } from '../auth/users/user.service';
 import { TimeInterval } from '../task/entities/time-restriction.entity';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Controller('projects')
 export class ProjectController {
@@ -54,8 +56,8 @@ export class ProjectController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.Admin)
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: CreateProjectDto) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectService.update(id, updateProjectDto);
   }
 

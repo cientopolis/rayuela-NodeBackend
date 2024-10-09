@@ -22,6 +22,16 @@ export class TaskController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.Admin)
+  @Post('/project/:id/bulk')
+  postBulk(
+    @Param('id') projectId: string,
+    @Body() createTaskDtoList: CreateTaskDto[],
+  ) {
+    return this.taskService.bulkSave(projectId, createTaskDtoList);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.Admin)
   @Post()
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.taskService.create(CreateTaskDto.fromDTO(createTaskDto));

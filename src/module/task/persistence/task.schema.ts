@@ -20,9 +20,6 @@ export class TaskSchemaTemplate {
   @Prop({ type: Types.ObjectId, ref: 'Area', required: true })
   areaId: Types.ObjectId;
 
-  @Prop({ required: true, min: 1 })
-  checkinAmount: number;
-
   @Prop({ required: true })
   type: string;
 

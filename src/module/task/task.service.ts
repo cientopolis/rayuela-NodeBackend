@@ -47,4 +47,10 @@ export class TaskService {
   async remove(id: string) {
     return await this.taskDao.deleteTask(id);
   }
+
+  async bulkSave(projectId: string, createTaskDtoList: CreateTaskDto[]) {
+    const count = await this.taskDao.deleteByProjectId(projectId);
+    console.log(count + ' tasks deleted');
+    return await this.taskDao.bulkSave(createTaskDtoList);
+  }
 }
