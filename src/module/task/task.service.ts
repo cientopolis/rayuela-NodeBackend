@@ -8,6 +8,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskDao } from './persistence/task.dao';
 import { Task } from './entities/task.entity';
 import { ProjectService } from '../project/project.service';
+import { TaskDocument } from './persistence/task.schema';
 
 @Injectable()
 export class TaskService {
@@ -26,6 +27,10 @@ export class TaskService {
       throw new BadRequestException('Area not found');
     }
     return await this.taskDao.create(createTaskDto);
+  }
+
+  async findRawByProjectId(projectId: string): Promise<TaskDocument[]> {
+    return await this.taskDao.getRawTasksByProject(projectId);
   }
 
   async findByProjectId(projectId: string): Promise<Task[]> {

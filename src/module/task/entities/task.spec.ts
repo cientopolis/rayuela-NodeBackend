@@ -53,7 +53,6 @@ describe('Task', () => {
       'project123',
       taskTimeRestriction,
       area,
-      3,
       'type',
     );
 

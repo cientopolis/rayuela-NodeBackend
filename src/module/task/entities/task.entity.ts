@@ -23,6 +23,21 @@ interface Geometry {
 }
 
 export class Task {
+  get timeInterval(): TimeInterval {
+    return this.#timeInterval;
+  }
+  get type(): string {
+    return this.#type;
+  }
+  get areaGeoJSON(): AreaGeoJSON {
+    return this.#areaGeoJSON;
+  }
+  get description(): string {
+    return this.#description;
+  }
+  get name(): string {
+    return this.#name;
+  }
   get projectId(): string {
     return this.#projectId;
   }

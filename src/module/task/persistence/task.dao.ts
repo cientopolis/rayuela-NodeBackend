@@ -65,12 +65,10 @@ export class TaskDao {
   }
 
   private async mapDocToTask(doc: TaskDocument): Promise<Task> {
-    const projectIdStr =
-      doc.projectId instanceof Object
-        ? doc.projectId.toString()
-        : doc.projectId;
-    const project = await this.projectDao.findOne(projectIdStr);
-    const area = project.areas.find((a) => a.id === doc.areaId);
+    const project = await this.projectDao.findOne(doc.projectId.toString());
+    const area = project.areas.features.find(
+      (f) => f.properties.id === doc.areaId,
+    );
     if (!area) {
       throw new NotFoundException('Area not found');
     }
@@ -78,7 +76,7 @@ export class TaskDao {
       doc._id,
       doc.name,
       doc.description,
-      projectIdStr, // Aquí se convierte en string si es necesario
+      doc.projectId.toString(),
       this.mapTimeRestriction(doc.timeIntervalId, project),
       area,
       doc.type,
@@ -106,5 +104,15 @@ export class TaskDao {
 
   async bulkSave(createTaskDtoList: CreateTaskDto[]): Promise<any> {
     return await this.taskModel.insertMany(createTaskDtoList);
+  }
+
+  async getRawTasksByProject(projectId: string) {
+    const tasks: TaskDocument[] = await this.taskModel
+      .find({ projectId })
+      .exec();
+    if (!tasks) {
+      throw new NotFoundException('No tasks found for this project');
+    }
+    return tasks;
   }
 }
