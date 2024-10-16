@@ -5,10 +5,10 @@ export type TaskDocument = TaskSchemaTemplate & Document;
 
 @Schema()
 export class TaskSchemaTemplate {
-  @Prop({ required: true })
+  @Prop({ required: false })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
