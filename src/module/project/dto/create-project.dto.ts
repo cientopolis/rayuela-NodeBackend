@@ -6,8 +6,22 @@ export class CreateProjectDto {
   image: string;
   web?: string;
   available: boolean;
-  areas: any;
+  areas: FeatureCollection;
   taskTypes: string[];
   timeIntervals: TimeInterval[];
   ownerId: string;
+}
+
+export interface FeatureCollection {
+  type: 'FeatureCollection';
+  features: Feature[];
+}
+
+export interface Feature {
+  type: string;
+  properties: Record<string, any>;
+  geometry: {
+    type: string;
+    coordinates: number[][][];
+  };
 }

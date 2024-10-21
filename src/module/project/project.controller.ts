@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Body,
   Param,
   UseGuards,
@@ -37,6 +36,7 @@ export class ProjectController {
     return this.userService.subscribeToProject(req.user, id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.projectService.findAll();

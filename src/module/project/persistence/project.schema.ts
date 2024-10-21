@@ -6,6 +6,8 @@ export type ProjectDocument = ProjectTemplate & Document;
 
 @Schema()
 export class ProjectTemplate {
+  /*@Prop({ required: false })
+  _id: Types.ObjectId;*/
   @Prop({ required: true, minlength: 1, maxlength: 30 })
   name: string;
 
