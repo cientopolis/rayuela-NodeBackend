@@ -12,7 +12,7 @@ export class ProjectDao {
     private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
-  async findAll(): Promise<ProjectTemplate[]> {
+  async findAll(): Promise<(ProjectTemplate & { _id: string })[]> {
     return this.projectModel.find().exec();
   }
 
@@ -38,7 +38,9 @@ export class ProjectDao {
     };
   }
 
-  async create(createProjectDto: CreateProjectDto): Promise<ProjectTemplate> {
+  async create(
+    createProjectDto: CreateProjectDto,
+  ): Promise<ProjectTemplate & { _id: string }> {
     const project = new this.projectModel(createProjectDto);
     return project.save();
   }
@@ -46,7 +48,7 @@ export class ProjectDao {
   async update(
     id: string,
     updateProjectDto: UpdateProjectDto,
-  ): Promise<ProjectTemplate> {
+  ): Promise<ProjectTemplate & { _id: string }> {
     const oldProject = await this.projectModel.findById(id);
     updateProjectDto.areas = {
       type: 'FeatureCollection',

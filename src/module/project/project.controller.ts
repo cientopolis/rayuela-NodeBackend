@@ -31,12 +31,6 @@ export class ProjectController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('subscription/:id')
-  subscribe(@Request() req, @Param('id') id: string) {
-    return this.userService.subscribeToProject(req.user, id);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.projectService.findAll();

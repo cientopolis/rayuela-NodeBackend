@@ -26,7 +26,7 @@ export class UserDao {
     return this.userModel.findById(userId).exec();
   }
 
-  async save(userId: string, user: any) {
-    return this.userModel.findByIdAndUpdate(userId, user);
+  update(id: string, userData: any) {
+    return this.userModel.findOneAndUpdate({ _id: id }, userData).exec();
   }
 }

@@ -8,8 +8,8 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 export class ProjectService {
   constructor(private readonly projectDao: ProjectDao) {}
 
-  async findAll(): Promise<ProjectTemplate[]> {
-    return this.projectDao.findAll();
+  async findAll(): Promise<(ProjectTemplate & { _id: string })[]> {
+    return this.projectDao.findAll().then((res) => res.map((p) => p['_doc']));
   }
 
   async findOne(id: string): Promise<ProjectTemplate> {

@@ -6,7 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectModule } from './module/project/project.module';
 import { AuthModule } from './module/auth/auth.module';
 import { TaskModule } from './module/task/task.module';
-import { CheckinModule } from './module/checkin/checkin.module'
+import { CheckinModule } from './module/checkin/checkin.module';
+import { VolunteerModule } from './module/volunteer/volunteer.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CheckinModule } from './module/checkin/checkin.module'
     AuthModule,
     TaskModule,
     CheckinModule,
+    VolunteerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
