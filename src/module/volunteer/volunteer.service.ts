@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateVolunteerDto } from './dto/create-volunteer.dto';
-import { UpdateVolunteerDto } from './dto/update-volunteer.dto';
+import { Injectable } from '@nestjs/common';
 import { UserJWT } from '../auth/auth.service';
 import { UserService } from '../auth/users/user.service';
 import { ProjectService } from '../project/project.service';
-import { ProjectTemplate } from '../project/persistence/project.schema';
+import {
+  ProjectDocument,
+  ProjectTemplate,
+} from '../project/persistence/project.schema';
 
 @Injectable()
 export class VolunteerService {
@@ -16,13 +17,15 @@ export class VolunteerService {
   async subscribeToProject(user: UserJWT, projectId: string) {
     const dbUser: any = await this.userService.getByUserId(user.userId);
 
+    let newProjects: ProjectDocument[] = [];
     if (dbUser.projects.includes(projectId)) {
-      throw new BadRequestException('Subscription already exists');
+      newProjects = dbUser._doc.projects.filter((p: string) => p !== projectId);
+    } else {
+      newProjects = dbUser._doc.projects.concat([projectId]);
     }
-
     return this.userService.update(user.userId, {
       ...dbUser._doc,
-      projects: dbUser._doc.projects.concat([projectId]),
+      projects: newProjects,
     });
   }
 
