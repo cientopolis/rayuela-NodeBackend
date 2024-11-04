@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBadgeDto } from './dto/create-badge.dto';
 import { UpdateBadgeDto } from './dto/update-badge.dto';
-import { UserDao } from '../auth/users/user.dao';
 import { BadgeDao } from './persistence/badge.dao';
 
 @Injectable()
 export class BadgeService {
   constructor(private readonly badgeDao: BadgeDao) {}
+
   create(createBadgeDto: CreateBadgeDto) {
     return this.badgeDao.create(createBadgeDto);
   }
