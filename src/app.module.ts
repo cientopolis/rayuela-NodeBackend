@@ -8,6 +8,7 @@ import { AuthModule } from './module/auth/auth.module';
 import { TaskModule } from './module/task/task.module';
 import { CheckinModule } from './module/checkin/checkin.module';
 import { VolunteerModule } from './module/volunteer/volunteer.module';
+import { BadgeModule } from './module/badge/badge.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { VolunteerModule } from './module/volunteer/volunteer.module';
     TaskModule,
     CheckinModule,
     VolunteerModule,
+    BadgeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
