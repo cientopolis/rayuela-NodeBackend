@@ -7,6 +7,7 @@ import { CreateTaskDto } from '../dto/create-task.dto';
 import { ProjectDao } from '../../project/persistence/project.dao';
 import { TimeInterval } from '../entities/time-restriction.entity';
 import { ProjectTemplate } from '../../project/persistence/project.schema';
+import { Project } from '../../project/entities/project';
 
 @Injectable()
 export class TaskDao {
@@ -65,9 +66,11 @@ export class TaskDao {
   }
 
   private async mapDocToTask(doc: TaskDocument): Promise<Task> {
-    const project = await this.projectDao.findOne(doc.projectId.toString());
+    const project: Project = await this.projectDao.findOne(
+      doc.projectId.toString(),
+    );
     const area = project.areas.features.find(
-      (f) => f.properties.id === doc.areaId,
+      (f) => f.properties.id === doc.areaId?.toString(),
     );
     if (!area) {
       throw new NotFoundException('Area not found');

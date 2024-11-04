@@ -13,6 +13,7 @@ import { AuthModule } from '../auth/auth.module';
     ]),
     AuthModule,
   ],
+  exports: [BadgeService, BadgeDao],
   controllers: [BadgeController],
   providers: [BadgeService, BadgeDao],
 })

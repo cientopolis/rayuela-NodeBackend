@@ -4,23 +4,28 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectDocument, ProjectTemplate } from './project.schema';
 import { CreateProjectDto, Feature } from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
+import { Project } from '../entities/project';
+import { BadgeDao } from '../../badge/persistence/badge.dao';
+import { Badge } from '../../badge/entities/badge.entity';
 
 @Injectable()
 export class ProjectDao {
   constructor(
     @InjectModel(ProjectTemplate.collectionName())
     private readonly projectModel: Model<ProjectDocument>,
+    private readonly badgeDao: BadgeDao,
   ) {}
 
-  async findAll(): Promise<(ProjectTemplate & { _id: string })[]> {
-    return this.projectModel.find().exec();
+  async findAll(): Promise<Project[]> {
+    return (await this.projectModel.find().exec()) as unknown as Project[];
   }
 
-  async findOne(id: string): Promise<ProjectTemplate & { _id: string }> {
+  async findOne(id: string): Promise<Project> {
     const project = await this.projectModel.findById(id).exec();
     if (!project) {
       throw new NotFoundException('Project not found');
     }
+    const possibleBadges: Badge[] = await this.badgeDao.findAllByProject(id);
     return {
       _id: id,
       name: project.name,
@@ -35,6 +40,7 @@ export class ProjectDao {
         ...project.areas,
         features: project.areas.features.filter((f) => !f.properties.disabled),
       },
+      possibleBadges,
     };
   }
 

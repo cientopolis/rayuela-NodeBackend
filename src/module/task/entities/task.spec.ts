@@ -1,14 +1,15 @@
-import { AreaGeoJSON, Task } from './task.entity';
+import { Task } from './task.entity';
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { TimeInterval } from './time-restriction.entity';
 import { GeoUtils } from '../utils/geoUtils';
+import { Feature } from '../../project/dto/create-project.dto';
 
 jest.mock('../utils/geoUtils'); // Mock de GeoUtils para controlar su comportamiento
 
 describe('Task', () => {
   let task: Task;
   let taskTimeRestriction: TimeInterval;
-  let area: AreaGeoJSON;
+  let area: Feature;
   let checkin: Checkin;
 
   beforeEach(() => {
@@ -30,8 +31,8 @@ describe('Task', () => {
         gid: '',
         source_object: '',
         source_gna: '',
+        id: 'area 0',
       },
-      id: 'area 0',
       geometry: {
         type: 'Polygon',
         coordinates: [

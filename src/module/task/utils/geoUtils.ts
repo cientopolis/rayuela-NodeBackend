@@ -6,13 +6,13 @@ export class GeoUtils {
   static isPointInPolygon(
     longitude: number,
     latitude: number,
-    polygonGeoJSON: Polygon,
+    polygonGeoJSON: { type: string; coordinates: number[][][] },
   ): boolean {
     // Crear un punto con las coordenadas proporcionadas
     const mapPoint = point([longitude, latitude]);
 
     // Verificar si el punto está dentro del polígono
-    return booleanPointInPolygon(mapPoint, polygonGeoJSON, {
+    return booleanPointInPolygon(mapPoint, polygonGeoJSON as Polygon, {
       ignoreBoundary: false,
     });
   }

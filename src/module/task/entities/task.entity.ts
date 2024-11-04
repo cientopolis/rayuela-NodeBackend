@@ -1,27 +1,7 @@
 import { Checkin } from '../../checkin/entities/checkin.entity';
 import { GeoUtils } from '../utils/geoUtils';
 import { TimeInterval } from './time-restriction.entity';
-
-export interface AreaGeoJSON {
-  id: string;
-  type: 'Feature';
-  properties: FeatureProperties;
-  geometry: Geometry;
-}
-
-interface FeatureProperties {
-  cid: string;
-  pos: string;
-  gid: string;
-  source_object: string;
-  source_gna: string;
-}
-
-interface Geometry {
-  type: 'Polygon';
-  coordinates: number[][][]; // Array de coordenadas para el polígono
-}
-
+import { Feature } from '../../project/dto/create-project.dto';
 export class Task {
   get timeInterval(): TimeInterval {
     return this.#timeInterval;
@@ -29,7 +9,7 @@ export class Task {
   get type(): string {
     return this.#type;
   }
-  get areaGeoJSON(): AreaGeoJSON {
+  get areaGeoJSON(): Feature {
     return this.#areaGeoJSON;
   }
   get description(): string {
@@ -49,7 +29,7 @@ export class Task {
   #description: string;
   #projectId: string;
   #timeInterval: TimeInterval;
-  #areaGeoJSON: AreaGeoJSON;
+  #areaGeoJSON: Feature;
   #type: string;
 
   constructor(
@@ -58,7 +38,7 @@ export class Task {
     description: string,
     projectId: string,
     timeRestriction: TimeInterval,
-    area: AreaGeoJSON,
+    area: Feature,
     type: string,
   ) {
     this.#_id = id;
