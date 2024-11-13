@@ -20,6 +20,9 @@ export class BadgeTemplate {
   @Prop({ required: true, min: 1 })
   checkinsAmount: number;
 
+  @Prop({ required: true })
+  mustContribute: boolean;
+
   @Prop({ type: [String], default: [] })
   previousBadges: string[];
 

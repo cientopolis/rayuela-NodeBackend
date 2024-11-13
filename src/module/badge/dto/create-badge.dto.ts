@@ -4,6 +4,7 @@ export class CreateBadgeDto {
   description: string;
   imageUrl: string;
   checkinsAmount: number;
+  mustContribute: boolean;
   previousBadges: string[];
   taskType: string;
   areaId: string;
