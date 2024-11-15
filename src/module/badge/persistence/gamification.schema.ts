@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type BadgeDocument = BadgeTemplate & Document;
+export type BadgeDocument = GamificationTemplate & Document;
 
 @Schema()
-export class BadgeTemplate {
+export class GamificationTemplate {
   @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
   projectId: Types.ObjectId;
 
@@ -40,4 +40,5 @@ export class BadgeTemplate {
   }
 }
 
-export const BadgeSchema = SchemaFactory.createForClass(BadgeTemplate);
+export const GamificationSchema =
+  SchemaFactory.createForClass(GamificationTemplate);

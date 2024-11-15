@@ -5,7 +5,7 @@ import { ProjectDocument, ProjectTemplate } from './project.schema';
 import { CreateProjectDto, Feature } from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
 import { Project } from '../entities/project';
-import { BadgeDao } from '../../badge/persistence/badge.dao';
+import { GamificationDao } from '../../badge/persistence/gamification-dao.service';
 import { Badge } from '../../badge/entities/badge.entity';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class ProjectDao {
   constructor(
     @InjectModel(ProjectTemplate.collectionName())
     private readonly projectModel: Model<ProjectDocument>,
-    private readonly badgeDao: BadgeDao,
+    private readonly badgeDao: GamificationDao,
   ) {}
 
   async findAll(): Promise<Project[]> {

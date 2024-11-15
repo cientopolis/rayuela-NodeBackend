@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectTemplate, ProjectSchema } from './persistence/project.schema';
 import { ProjectDao } from './persistence/project.dao';
 import { AuthModule } from '../auth/auth.module';
-import { BadgeModule } from '../badge/badge.module';
+import { GamificationModule } from '../badge/gamificationModule';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { BadgeModule } from '../badge/badge.module';
       { name: ProjectTemplate.collectionName(), schema: ProjectSchema },
     ]),
     AuthModule,
-    BadgeModule,
+    GamificationModule,
   ],
   controllers: [ProjectController],
   providers: [ProjectService, ProjectDao],

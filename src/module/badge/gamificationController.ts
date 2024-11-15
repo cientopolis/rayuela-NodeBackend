@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { BadgeService } from './badge.service';
+import { GamificationService } from './gamification.service';
 import { CreateBadgeDto } from './dto/create-badge.dto';
 import { UpdateBadgeDto } from './dto/update-badge.dto';
 
-@Controller('badges')
-export class BadgeController {
-  constructor(private readonly badgeService: BadgeService) {}
+@Controller('gamification')
+export class GamificationController {
+  constructor(private readonly badgeService: GamificationService) {}
 
   @Post()
   create(@Body() createBadgeDto: CreateBadgeDto) {
