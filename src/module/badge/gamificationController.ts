@@ -8,35 +8,40 @@ import {
   Delete,
 } from '@nestjs/common';
 import { GamificationService } from './gamification.service';
-import { CreateBadgeDto } from './dto/create-badge.dto';
-import { UpdateBadgeDto } from './dto/update-badge.dto';
+import { CreateBadgeRuleDTO } from './dto/create-badge-rule-d-t.o';
+import { UpdateGamificationDto } from './dto/update-gamification.dto';
+import { UpdateBadgeRuleDTO } from './dto/update-badge-rule-d-t.o';
 
 @Controller('gamification')
 export class GamificationController {
-  constructor(private readonly badgeService: GamificationService) {}
+  constructor(private readonly gamificationService: GamificationService) {}
 
-  @Post()
-  create(@Body() createBadgeDto: CreateBadgeDto) {
-    return this.badgeService.create(createBadgeDto);
+  @Post('badge')
+  create(@Body() createBadgeDto: CreateBadgeRuleDTO) {
+    return this.gamificationService.createBadge(createBadgeDto);
   }
 
-  @Get('project/:projectId')
+  @Patch('badge/:id')
+  updateBadge(
+    @Body() updateBadgeDTO: UpdateBadgeRuleDTO,
+    @Param('id') id: string,
+  ) {
+    return this.gamificationService.updateBadge(id, updateBadgeDTO);
+  }
+  @Delete('/:projectId/badge/:id')
+  remove(@Param('projectId') projectId: string, @Param('id') id: string) {
+    return this.gamificationService.removeBadge(projectId, id);
+  }
+
+  @Patch(':projectId')
+  update(
+    @Param('projectId') projectId: string,
+    @Body() updateGamificationDTO: UpdateGamificationDto,
+  ) {
+    return this.gamificationService.update(projectId, updateGamificationDTO);
+  }
+  @Get(':projectId')
   findAll(@Param('projectId') projectId: string) {
-    return this.badgeService.findAllByProjectId(projectId);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.badgeService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBadgeDto: UpdateBadgeDto) {
-    return this.badgeService.update(id, updateBadgeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.badgeService.remove(id);
+    return this.gamificationService.findByProjectId(projectId);
   }
 }

@@ -1,4 +1,5 @@
-export class CreateBadgeDto {
+export class CreateBadgeRuleDTO {
+  _id: string;
   projectId: string;
   name: string;
   description: string;

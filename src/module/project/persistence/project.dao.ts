@@ -6,14 +6,14 @@ import { CreateProjectDto, Feature } from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
 import { Project } from '../entities/project';
 import { GamificationDao } from '../../badge/persistence/gamification-dao.service';
-import { Badge } from '../../badge/entities/badge.entity';
+import { Gamification } from '../../badge/entities/badge.entity';
 
 @Injectable()
 export class ProjectDao {
   constructor(
     @InjectModel(ProjectTemplate.collectionName())
     private readonly projectModel: Model<ProjectDocument>,
-    private readonly badgeDao: GamificationDao,
+    private readonly gamificationDao: GamificationDao,
   ) {}
 
   async findAll(): Promise<Project[]> {
@@ -25,7 +25,8 @@ export class ProjectDao {
     if (!project) {
       throw new NotFoundException('Project not found');
     }
-    const possibleBadges: Badge[] = await this.badgeDao.findAllByProject(id);
+    const gamification: Gamification =
+      await this.gamificationDao.getGamificationByProjectId(id);
     return {
       _id: id,
       name: project.name,
@@ -40,15 +41,18 @@ export class ProjectDao {
         ...project.areas,
         features: project.areas.features.filter((f) => !f.properties.disabled),
       },
-      possibleBadges,
+      gamification,
     };
   }
 
   async create(
     createProjectDto: CreateProjectDto,
   ): Promise<ProjectTemplate & { _id: string }> {
-    const project = new this.projectModel(createProjectDto);
-    return project.save();
+    const project = await new this.projectModel(createProjectDto).save();
+    await this.gamificationDao.createNewGamificationFor(
+      project['_id']?.toString(),
+    );
+    return project;
   }
 
   async update(

@@ -1,29 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBadgeDto } from './dto/create-badge.dto';
-import { UpdateBadgeDto } from './dto/update-badge.dto';
+import { CreateBadgeRuleDTO } from './dto/create-badge-rule-d-t.o';
 import { GamificationDao } from './persistence/gamification-dao.service';
+import { UpdateGamificationDto } from './dto/update-gamification.dto';
+import { UpdateBadgeRuleDTO } from './dto/update-badge-rule-d-t.o';
 
 @Injectable()
 export class GamificationService {
-  constructor(private readonly badgeDao: GamificationDao) {}
+  constructor(private readonly gamificationDao: GamificationDao) {}
 
-  create(createBadgeDto: CreateBadgeDto) {
-    return this.badgeDao.create(createBadgeDto);
+  createBadge(createBadgeDto: CreateBadgeRuleDTO) {
+    return this.gamificationDao.addBadge(
+      createBadgeDto.projectId,
+      createBadgeDto,
+    );
   }
 
-  findAllByProjectId(projectId: string) {
-    return this.badgeDao.findAllByProject(projectId);
+  findByProjectId(projectId: string) {
+    return this.gamificationDao.getGamificationByProjectId(projectId);
   }
 
-  findOne(id: string) {
-    return this.badgeDao.findById(id);
+  update(projectId: string, gamificationDto: UpdateGamificationDto) {
+    return this.gamificationDao.updateGamification(projectId, gamificationDto);
   }
 
-  update(id: string, updateBadgeDto: UpdateBadgeDto) {
-    return this.badgeDao.update(id, updateBadgeDto);
+  removeBadge(projectId: string, id: string) {
+    return this.gamificationDao.deleteBadge(projectId, id);
   }
 
-  remove(id: string) {
-    return this.badgeDao.delete(id);
+  updateBadge(id: string, updateBadgeDTO: UpdateBadgeRuleDTO) {
+    return this.gamificationDao.updateBadge(id, updateBadgeDTO);
   }
 }

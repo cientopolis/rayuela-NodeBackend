@@ -1,12 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-export type BadgeDocument = GamificationTemplate & Document;
+import { Types, Document } from 'mongoose';
 
 @Schema()
-export class GamificationTemplate {
-  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
-  projectId: Types.ObjectId;
+export class BadgeTemplate {
+  @Prop({ required: true })
+  _id: string;
 
   @Prop({ required: true })
   name: string;
@@ -34,11 +32,45 @@ export class GamificationTemplate {
 
   @Prop({ required: true })
   timeIntervalId: string;
+}
+
+const BadgeTemplateSchema = SchemaFactory.createForClass(BadgeTemplate);
+
+@Schema()
+export class PointRule {
+  @Prop({ required: true })
+  _id: string;
+  @Prop({ required: true })
+  score: number;
+
+  @Prop({ required: true })
+  areaId: string;
+
+  @Prop({ required: true })
+  timeIntervalId: string;
+
+  @Prop({ required: true })
+  taskType: string;
+}
+
+const PointRuleSchema = SchemaFactory.createForClass(PointRule);
+
+@Schema()
+export class GamificationTemplate extends Document {
+  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  projectId: string;
+
+  @Prop({ type: [BadgeTemplateSchema], default: [] })
+  badges: BadgeTemplate[];
+
+  @Prop({ type: [PointRuleSchema], default: [] })
+  pointRules: PointRule[];
 
   static collectionName() {
-    return 'Badges';
+    return 'Gamification';
   }
 }
 
-export const GamificationSchema =
+export type GamificationTemplateDocument = GamificationTemplate & Document;
+export const GamificationTemplateSchema =
   SchemaFactory.createForClass(GamificationTemplate);

@@ -1,5 +1,5 @@
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
-import { Badge } from '../../badge/entities/badge.entity';
+import { Gamification } from '../../badge/entities/badge.entity';
 import { FeatureCollection } from '../dto/create-project.dto';
 
 export class Project {
@@ -14,7 +14,7 @@ export class Project {
     taskTypes: string[],
     timeIntervals: TimeInterval[],
     ownerId: string,
-    possibleBadges: Badge[],
+    gamification: Gamification,
   ) {
     this._id = id;
     this.name = name;
@@ -26,7 +26,7 @@ export class Project {
     this.taskTypes = taskTypes;
     this.timeIntervals = timeIntervals;
     this.ownerId = ownerId;
-    this.possibleBadges = possibleBadges;
+    this.gamification = gamification;
   }
   _id: string;
   name: string;
@@ -38,5 +38,5 @@ export class Project {
   taskTypes: string[];
   timeIntervals: TimeInterval[];
   ownerId: string;
-  possibleBadges: Badge[];
+  gamification: Gamification;
 }
