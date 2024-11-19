@@ -11,13 +11,13 @@ export class TaskSchemaTemplate {
   @Prop({ required: false })
   description: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  @Prop({ ref: 'Project', required: true })
   projectId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Area', required: true })
+  @Prop({ ref: 'Area', required: true })
   timeIntervalId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Area', required: true })
+  @Prop({ ref: 'Area', required: true })
   areaId: Types.ObjectId;
 
   @Prop({ required: true })

@@ -14,10 +14,10 @@ export class CheckInTemplate {
   @Prop({ required: true, type: Date })
   datetime: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  @Prop({ ref: 'Project', required: true })
   projectId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ ref: 'User', required: true })
   userId: Types.ObjectId;
 
   @Prop({ type: String })

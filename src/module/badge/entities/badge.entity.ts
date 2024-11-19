@@ -58,6 +58,7 @@ export class PointRule {
   taskType: string;
   areaId: string;
   timeIntervalId: string;
+  score: number;
 
   constructor(
     id: string,
@@ -65,11 +66,13 @@ export class PointRule {
     taskType: string,
     areaId: string,
     timeIntervalId: string,
+    score: number,
   ) {
     this._id = id;
     this.projectId = projectId;
     this.taskType = taskType;
     this.areaId = areaId;
     this.timeIntervalId = timeIntervalId;
+    this.score = score;
   }
 }

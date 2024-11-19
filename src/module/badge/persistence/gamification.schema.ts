@@ -3,6 +3,9 @@ import { Types, Document } from 'mongoose';
 
 @Schema()
 export class BadgeTemplate {
+  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  projectId: string;
+
   @Prop({ required: true })
   _id: string;
 

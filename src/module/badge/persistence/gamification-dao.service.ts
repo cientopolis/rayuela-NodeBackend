@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   BadgeTemplate,
   GamificationTemplate,
@@ -9,8 +9,9 @@ import {
 import { CreateBadgeRuleDTO } from '../dto/create-badge-rule-d-t.o';
 import { BadgeRule, Gamification, PointRule } from '../entities/badge.entity';
 import { UpdateGamificationDto } from '../dto/update-gamification.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { UpdateBadgeRuleDTO } from '../dto/update-badge-rule-d-t.o';
+import { CreateScoreRuleDto } from '../dto/create-score-rule-dto';
+import { UpdateScoreRuleDto } from '../dto/update-score-rule.dto';
 
 @Injectable()
 export class GamificationDao {
@@ -29,7 +30,10 @@ export class GamificationDao {
     if (!gamificationTemplate) {
       throw new Error('Project not found');
     }
-    gamificationTemplate.badges.push({ _id: uuidv4(), ...createBadgeDto });
+    gamificationTemplate.badges.push({
+      _id: new Types.ObjectId(),
+      ...createBadgeDto,
+    });
     return gamificationTemplate.save();
   }
 
@@ -78,14 +82,9 @@ export class GamificationDao {
       .exec();
   }
 
-  async addPointRule(
+  async addScoreRule(
     projectId: string,
-    pointRule: {
-      score: number;
-      areaId: string;
-      timeIntervalId: string;
-      taskType: string;
-    },
+    pointRule: CreateScoreRuleDto,
   ): Promise<GamificationTemplate | null> {
     const gamificationTemplate = await this.gamificationModel.findOne({
       projectId,
@@ -93,23 +92,20 @@ export class GamificationDao {
     if (!gamificationTemplate) {
       throw new Error('Project not found');
     }
-    gamificationTemplate.pointRules.push({ _id: uuidv4(), ...pointRule });
+    gamificationTemplate.pointRules.push({
+      _id: new Types.ObjectId(),
+      ...pointRule,
+    });
     return gamificationTemplate.save();
   }
 
   async updatePointRule(
     projectId: string,
-    ruleId: string,
-    updatedRule: {
-      score: number;
-      areaId: string;
-      timeIntervalId: string;
-      taskType: string;
-    },
+    updatedRule: UpdateScoreRuleDto,
   ): Promise<GamificationTemplate | null> {
     return this.gamificationModel
       .findOneAndUpdate(
-        { projectId, 'pointRules._id': ruleId },
+        { projectId, 'pointRules._id': updatedRule._id },
         { $set: { 'pointRules.$': updatedRule } },
         { new: true },
       )
@@ -137,8 +133,8 @@ export class GamificationDao {
         (b) =>
           new BadgeRule(
             b._id,
+            b.projectId,
             b.name,
-            b.taskType,
             b.description,
             b.imageUrl,
             b.checkinsAmount,
@@ -157,6 +153,7 @@ export class GamificationDao {
             r.taskType,
             r.areaId,
             r.timeIntervalId,
+            r.score,
           ),
       ),
     );

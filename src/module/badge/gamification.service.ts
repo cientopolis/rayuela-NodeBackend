@@ -3,6 +3,8 @@ import { CreateBadgeRuleDTO } from './dto/create-badge-rule-d-t.o';
 import { GamificationDao } from './persistence/gamification-dao.service';
 import { UpdateGamificationDto } from './dto/update-gamification.dto';
 import { UpdateBadgeRuleDTO } from './dto/update-badge-rule-d-t.o';
+import { CreateScoreRuleDto } from './dto/create-score-rule-dto';
+import { UpdateScoreRuleDto } from './dto/update-score-rule.dto';
 
 @Injectable()
 export class GamificationService {
@@ -29,5 +31,17 @@ export class GamificationService {
 
   updateBadge(id: string, updateBadgeDTO: UpdateBadgeRuleDTO) {
     return this.gamificationDao.updateBadge(id, updateBadgeDTO);
+  }
+
+  createScoreRule(dto: CreateScoreRuleDto) {
+    return this.gamificationDao.addScoreRule(dto.projectId, dto);
+  }
+
+  updateScoreRule(dto: UpdateScoreRuleDto) {
+    return this.gamificationDao.updatePointRule(dto.projectId, dto);
+  }
+
+  removeScoreRule(projectId: string, id: string) {
+    return this.gamificationDao.deletePointRule(projectId, id);
   }
 }

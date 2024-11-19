@@ -44,7 +44,7 @@ export class ProjectTemplate {
   })
   timeIntervals: TimeInterval[];
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ ref: 'User', required: true })
   ownerId: string;
 
   static collectionName() {
