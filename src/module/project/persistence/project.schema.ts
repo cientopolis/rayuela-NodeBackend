@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 export type ProjectDocument = ProjectTemplate & Document;
