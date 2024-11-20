@@ -30,6 +30,11 @@ export class GamificationDao {
     if (!gamificationTemplate) {
       throw new Error('Project not found');
     }
+    if (
+      gamificationTemplate.badges.find((b) => b.name === createBadgeDto.name)
+    ) {
+      throw new Error('Ya existe una insignia con ese nombre');
+    }
     gamificationTemplate.badges.push({
       _id: new Types.ObjectId(),
       ...createBadgeDto,
