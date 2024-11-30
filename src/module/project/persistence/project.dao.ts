@@ -6,7 +6,7 @@ import { CreateProjectDto, Feature } from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
 import { Project } from '../entities/project';
 import { GamificationDao } from '../../badge/persistence/gamification-dao.service';
-import { Gamification } from '../../badge/entities/badge.entity';
+import { Gamification } from '../../badge/entities/gamification.entity';
 
 @Injectable()
 export class ProjectDao {

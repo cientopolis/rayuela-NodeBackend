@@ -54,6 +54,9 @@ export class PointRule {
 
   @Prop({ required: true })
   taskType: string;
+
+  @Prop({ required: true })
+  mustContribute: boolean;
 }
 
 const PointRuleSchema = SchemaFactory.createForClass(PointRule);

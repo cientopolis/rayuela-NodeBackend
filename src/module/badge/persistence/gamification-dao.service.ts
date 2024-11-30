@@ -7,7 +7,11 @@ import {
   GamificationTemplateDocument,
 } from './gamification.schema';
 import { CreateBadgeRuleDTO } from '../dto/create-badge-rule-d-t.o';
-import { BadgeRule, Gamification, PointRule } from '../entities/badge.entity';
+import {
+  BadgeRule,
+  Gamification,
+  PointRule,
+} from '../entities/gamification.entity';
 import { UpdateGamificationDto } from '../dto/update-gamification.dto';
 import { UpdateBadgeRuleDTO } from '../dto/update-badge-rule-d-t.o';
 import { CreateScoreRuleDto } from '../dto/create-score-rule-dto';
@@ -159,6 +163,7 @@ export class GamificationDao {
             r.areaId,
             r.timeIntervalId,
             r.score,
+            r.mustContribute,
           ),
       ),
     );

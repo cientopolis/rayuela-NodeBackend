@@ -59,6 +59,7 @@ export class PointRule {
   areaId: string;
   timeIntervalId: string;
   score: number;
+  mustContribute: boolean;
 
   constructor(
     id: string,
@@ -67,6 +68,7 @@ export class PointRule {
     areaId: string,
     timeIntervalId: string,
     score: number,
+    mustContribute: boolean,
   ) {
     this._id = id;
     this.projectId = projectId;
@@ -74,5 +76,6 @@ export class PointRule {
     this.areaId = areaId;
     this.timeIntervalId = timeIntervalId;
     this.score = score;
+    this.mustContribute = mustContribute;
   }
 }

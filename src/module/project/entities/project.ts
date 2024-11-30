@@ -1,5 +1,5 @@
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
-import { Gamification } from '../../badge/entities/badge.entity';
+import { Gamification } from '../../badge/entities/gamification.entity';
 import { FeatureCollection } from '../dto/create-project.dto';
 
 export class Project {

@@ -5,4 +5,5 @@ export class CreateScoreRuleDto {
   taskType: string;
   areaId: string;
   timeIntervalId: string;
+  mustContribute: boolean;
 }
