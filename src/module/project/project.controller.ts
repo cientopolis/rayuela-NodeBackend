@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   UseGuards,
-  Patch,
+  Patch, Req,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { UserRole } from '../auth/users/user.schema';
@@ -42,9 +42,11 @@ export class ProjectController {
     return this.projectService.create(createProjectDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req) {
+    const userId = req.user.userId;
+    return this.projectService.findOne(id, userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -3,17 +3,29 @@ import { ProjectDao } from './persistence/project.dao';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectTemplate } from './persistence/project.schema';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { UserService } from '../auth/users/user.service';
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly projectDao: ProjectDao) {}
+  constructor(
+    private readonly projectDao: ProjectDao,
+    private readonly userService: UserService,
+  ) {}
 
   async findAll(): Promise<(ProjectTemplate & { _id: string })[]> {
     return this.projectDao.findAll().then((res) => res.map((p) => p['_doc']));
   }
 
-  async findOne(id: string): Promise<ProjectTemplate> {
-    return this.projectDao.findOne(id);
+  async findOne(
+    id: string,
+    userId?: string,
+  ): Promise<ProjectTemplate & { userIsSubscribed?: boolean }> {
+    const project = await this.projectDao.findOne(id);
+    if (userId) {
+      const user = await this.userService.getByUserId(userId);
+      return { ...project, userIsSubscribed: user.projects.includes(id) };
+    }
+    return project;
   }
 
   async create(createProjectDto: CreateProjectDto): Promise<ProjectTemplate> {
