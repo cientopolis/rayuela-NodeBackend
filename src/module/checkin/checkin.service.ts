@@ -37,4 +37,8 @@ export class CheckinService {
   async remove(id: string) {
     return this.checkInDao.remove(id);
   }
+
+  findByProjectId(projectId: string) {
+    return this.checkInDao.findByProjectId(projectId);
+  }
 }

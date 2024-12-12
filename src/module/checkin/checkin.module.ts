@@ -15,6 +15,7 @@ import { TaskModule } from '../task/task.module';
     AuthModule,
     TaskModule,
   ],
+  exports: [CheckinService],
   controllers: [CheckinController],
   providers: [CheckinService, CheckInDao],
 })

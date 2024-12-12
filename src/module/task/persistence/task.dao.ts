@@ -70,7 +70,7 @@ export class TaskDao {
       doc.projectId.toString(),
     );
     const area = project.areas.features.find(
-      (f) => f.properties.id === doc.areaId?.toString(),
+      (f) => f.properties.id?.toString() === doc.areaId?.toString(),
     );
     if (!area) {
       throw new NotFoundException('Area not found');

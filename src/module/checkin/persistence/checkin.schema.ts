@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type CheckInDocument = CheckInTemplate & Document;
 
@@ -15,10 +15,10 @@ export class CheckInTemplate {
   datetime: Date;
 
   @Prop({ ref: 'Project', required: true })
-  projectId: Types.ObjectId;
+  projectId: string;
 
   @Prop({ ref: 'User', required: true })
-  userId: Types.ObjectId;
+  userId: string;
 
   @Prop({ type: String })
   contributesTo: string;
@@ -34,8 +34,8 @@ export class CheckInTemplate {
     this.latitude = latitude;
     this.longitude = longitude;
     this.datetime = datetime;
-    this.projectId = new Types.ObjectId(projectId);
-    this.userId = new Types.ObjectId(userId);
+    this.projectId = projectId;
+    this.userId = userId;
     this.contributesTo = contributesTo;
   }
 

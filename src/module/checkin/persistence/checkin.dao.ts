@@ -60,4 +60,8 @@ export class CheckInDao {
       checkin.contributesTo,
     );
   }
+
+  findByProjectId(projectId: string) {
+    return this.checkInModel.find({ projectId }).exec();
+  }
 }
