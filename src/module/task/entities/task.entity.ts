@@ -64,7 +64,7 @@ export class Task {
     const isValid = this.#timeInterval.satisfy(date);
     !isValid &&
       console.log(
-        `[VALIDATION] Date ${date} is not valid for restriction: ${this.#timeInterval}`,
+        `[VALIDATION] Date ${date} is not valid for restriction: ${JSON.stringify(this.#timeInterval)}`,
       );
     return isValid;
   }

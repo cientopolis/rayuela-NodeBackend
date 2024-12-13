@@ -1,6 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { config } from 'dotenv';
+
+config({ path: `.env.${process.env.NODE_ENV || 'development'}` });
+
+console.log(`Current NODE_ENV: ${process.env.NODE_ENV}`);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -19,4 +24,5 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(3000);
 }
+
 bootstrap();

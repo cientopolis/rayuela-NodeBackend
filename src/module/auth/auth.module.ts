@@ -15,6 +15,7 @@ import { UserDao } from './users/user.dao';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Hace que las variables estén disponibles globalmente
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // Carga el archivo según el entorno
     }),
     PassportModule,
     JwtModule.register({

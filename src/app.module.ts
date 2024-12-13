@@ -15,6 +15,7 @@ import { LeaderboardModule } from './module/leaderboard/leaderboard.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // Hace que las variables estén disponibles globalmente
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // Carga el archivo según el entorno
     }),
     MongooseModule.forRoot(process.env.DB_CONNECTION as string),
     ProjectModule,
