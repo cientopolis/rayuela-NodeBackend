@@ -1,5 +1,3 @@
-import { Checkin } from '../entities/checkin.entity';
-
 export class CreateCheckinDto {
   latitude: string;
   longitude: string;

@@ -30,6 +30,6 @@ export class LeaderboardService {
       const user = await this.userService.getByUserId(el.userId);
       result.push({ user, points: el.points });
     }
-    return result.slice(0,10);
+    return result.slice(0, 10);
   }
 }
