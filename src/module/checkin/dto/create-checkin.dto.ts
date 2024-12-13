@@ -6,22 +6,21 @@ export class CreateCheckinDto {
   datetime: Date;
   projectId: string;
   userId: string;
+  taskType: string;
 
-  constructor({ datetime, latitude, projectId, userId, longitude }) {
+  constructor({
+    datetime,
+    latitude,
+    projectId,
+    userId,
+    longitude,
+    taskType,
+  }: CreateCheckinDto) {
     this.datetime = datetime;
     this.latitude = latitude;
     this.longitude = longitude;
     this.userId = userId;
     this.projectId = projectId;
-  }
-
-  toDomain() {
-    return new Checkin(
-      this.latitude,
-      this.longitude,
-      this.datetime,
-      this.projectId,
-      this.userId,
-    );
+    this.taskType = taskType;
   }
 }

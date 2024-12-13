@@ -29,6 +29,7 @@ export class CheckinController {
         datetime: createCheckinDto.datetime,
         projectId: createCheckinDto.projectId,
         userId: userId,
+        taskType: createCheckinDto.taskType,
       }),
     );
   }

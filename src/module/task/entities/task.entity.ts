@@ -52,6 +52,7 @@ export class Task {
 
   accept(checkin: Checkin) {
     const validations = [
+      this.isSameTaskType(checkin),
       this.isSameProject(checkin),
       this.isValidTimeRestriction(checkin.date),
       this.isValidArea(checkin),
@@ -88,5 +89,9 @@ export class Task {
         `[VALIDATION] Point out of area ${checkin.latitude} ${checkin.longitude} and ${JSON.stringify(this.#areaGeoJSON.geometry)}`,
       );
     return isValid;
+  }
+
+  private isSameTaskType(checkin: Checkin) {
+    return this.#type === checkin.taskType;
   }
 }

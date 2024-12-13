@@ -1,4 +1,9 @@
+import { CreateCheckinDto } from '../dto/create-checkin.dto';
+
 export class Checkin {
+  get taskType(): string {
+    return this.#taskType;
+  }
   set date(value: Date) {
     this.#date = value;
   }
@@ -29,6 +34,7 @@ export class Checkin {
   #projectId: string;
   #userId: string;
   #contributesTo: string;
+  #taskType: string;
 
   constructor(
     latitude: string,
@@ -36,16 +42,29 @@ export class Checkin {
     datetime: Date,
     projectId: string,
     userId: string,
+    taskType: string,
   ) {
     this.#latitude = latitude;
     this.#longitude = longitude;
     this.#date = datetime;
     this.#projectId = projectId;
     this.#userId = userId;
+    this.#taskType = taskType;
     this.#contributesTo = '';
   }
 
   validateContribution(id: string): void {
     this.#contributesTo = id;
+  }
+
+  static fromDTO(createCheckinDto: CreateCheckinDto) {
+    return new Checkin(
+      createCheckinDto.latitude,
+      createCheckinDto.longitude,
+      createCheckinDto.datetime,
+      createCheckinDto.projectId,
+      createCheckinDto.userId,
+      createCheckinDto.taskType,
+    );
   }
 }

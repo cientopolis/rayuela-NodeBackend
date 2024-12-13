@@ -4,6 +4,7 @@ import { UpdateCheckinDto } from './dto/update-checkin.dto';
 import { CheckInDao } from './persistence/checkin.dao';
 import { TaskService } from '../task/task.service';
 import { Task } from '../task/entities/task.entity';
+import { Checkin } from './entities/checkin.entity';
 
 @Injectable()
 export class CheckinService {
@@ -16,7 +17,7 @@ export class CheckinService {
     const tasks: Task[] = await this.taskService.findByProjectId(
       createCheckinDto.projectId,
     );
-    const checkin = createCheckinDto.toDomain();
+    const checkin = Checkin.fromDTO(createCheckinDto);
     const contributionTask = tasks.find((task) => task.accept(checkin));
     checkin.validateContribution(contributionTask?.getId() || '');
     return this.checkInDao.create(checkin);

@@ -9,7 +9,14 @@ describe('Checkin Class', () => {
   const userId = 'user123';
 
   beforeEach(() => {
-    checkin = new Checkin(latitude, longitude, datetime, projectId, userId);
+    checkin = new Checkin(
+      latitude,
+      longitude,
+      datetime,
+      projectId,
+      userId,
+      'tasktype',
+    );
   });
 
   it('should initialize with correct values', () => {
