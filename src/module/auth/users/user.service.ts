@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserDocument } from './user.schema';
 import { UserDao } from './user.dao';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
@@ -9,19 +9,19 @@ export class UserService {
   async findByEmailOrUsername(
     email: string,
     username: string,
-  ): Promise<UserDocument | null> {
+  ): Promise<User | null> {
     return this.userDao.findByEmailOrUsername(email, username);
   }
 
-  async create(userData: any): Promise<UserDocument> {
+  async create(userData: User): Promise<User> {
     return this.userDao.create(userData);
   }
 
-  async update(id: string, userData: any): Promise<UserDocument> {
+  async update(id: string, userData: any): Promise<User> {
     return this.userDao.update(id, userData);
   }
 
-  async getByUserId(userId: string): Promise<UserDocument | null> {
-    return this.userDao.getUserById(userId);
+  async getByUserId(userId: string): Promise<User | null> {
+    return await this.userDao.getUserById(userId);
   }
 }

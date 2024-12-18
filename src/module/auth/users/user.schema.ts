@@ -13,6 +13,9 @@ export class UserTemplate {
   @Prop({ required: true })
   complete_name: string; // Nombre completo del usuario
 
+  @Prop({ required: true })
+  points: number;
+
   @Prop({ required: true, unique: true })
   username: string; // Nombre de usuario único
 

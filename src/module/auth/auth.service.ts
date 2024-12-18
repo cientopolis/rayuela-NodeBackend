@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserDocument, UserRole } from './users/user.schema';
+import { UserRole } from './users/user.schema';
 import { UserService } from './users/user.service';
 import * as bcrypt from 'bcrypt';
+import { User } from './users/user.entity';
+import { RegisterUserDTO } from './auth.controller';
 
 export interface UserJWT {
   userId: string;
@@ -17,17 +19,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
+  async validateUser(username: string, password: string): Promise<User> {
     const user = await this.usersService.findByEmailOrUsername('', username);
     if (user && (await bcrypt.compare(password, user.password))) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+      return user;
     }
     return null;
   }
 
-  async register(registerDto: any): Promise<UserDocument> {
+  async register(registerDto: RegisterUserDTO): Promise<User> {
     // Verifica que el correo y el username no estén ya en uso
     const existingUser = await this.usersService.findByEmailOrUsername(
       registerDto.email,
@@ -36,16 +36,21 @@ export class AuthService {
     if (existingUser) {
       throw new BadRequestException('Email or Username already in use');
     }
+    const pw = await this.hashPassword(registerDto.password);
 
-    return await this.usersService.create({
-      complete_name: registerDto.complete_name,
-      username: registerDto.username,
-      email: registerDto.email,
-      password: await this.hashPassword(registerDto.password),
-      profile_image: registerDto.profile_image || null,
-      role: registerDto.role || UserRole.Volunteer,
-      verified: false,
-    });
+    return await this.usersService.create(
+      new User(
+        registerDto.complete_name,
+        0,
+        registerDto.username,
+        registerDto.email,
+        pw,
+        registerDto.profile_image,
+        false,
+        registerDto.role,
+        [],
+      ),
+    );
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -53,11 +58,11 @@ export class AuthService {
     return bcrypt.hash(password, salt);
   }
 
-  async login(user: any) {
+  async login(user: User) {
     const payload = {
-      username: user._doc.username,
-      sub: user._doc._id,
-      role: user._doc.role,
+      username: user.username,
+      sub: user.id,
+      role: user.role,
     };
     return {
       access_token: this.jwtService.sign(payload),

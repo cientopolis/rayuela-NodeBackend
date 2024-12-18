@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserTemplate, UserDocument } from './user.schema';
+import { UserDocument, UserTemplate } from './user.schema';
+import { User } from './user.entity';
+import { UserMapper } from './UserMapper';
+import { RegisterUserDTO } from '../auth.controller';
 
 @Injectable()
 export class UserDao {
@@ -13,20 +16,30 @@ export class UserDao {
   async findByEmailOrUsername(
     email: string,
     username: string,
-  ): Promise<UserDocument | null> {
-    return this.userModel.findOne({ $or: [{ email }, { username }] }).exec();
+  ): Promise<User | null> {
+    const userDocument = await this.userModel
+      .findOne({ $or: [{ email }, { username }] })
+      .exec();
+    return userDocument ? UserMapper.toEntity(userDocument) : null;
   }
 
-  async create(userData: any): Promise<UserDocument> {
-    const createdUser = new this.userModel(userData);
-    return createdUser.save();
+  async create(userData: User): Promise<User> {
+    const createdUser = new this.userModel(UserMapper.toTemplate(userData));
+    const savedUser = await createdUser.save();
+    return UserMapper.toEntity(savedUser);
   }
 
-  async getUserById(userId: string) {
-    return this.userModel.findById(userId).exec();
+  async getUserById(userId: string): Promise<User | null> {
+    const userDocument = await this.userModel.findById(userId).exec();
+    return userDocument ? UserMapper.toEntity(userDocument) : null;
   }
 
-  update(id: string, userData: any) {
-    return this.userModel.findOneAndUpdate({ _id: id }, userData).exec();
+  async update(id: string, userData: any): Promise<User | null> {
+    const updatedUser = await this.userModel
+      .findOneAndUpdate({ _id: id }, userData, {
+        new: true, // Devuelve el documento actualizado
+      })
+      .exec();
+    return updatedUser ? UserMapper.toEntity(updatedUser) : null;
   }
 }

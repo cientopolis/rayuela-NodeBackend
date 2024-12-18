@@ -8,6 +8,15 @@ import {
 import { AuthService } from './auth.service';
 import { UserRole } from './users/user.schema';
 
+export interface RegisterUserDTO {
+  complete_name: string;
+  username: string;
+  email: string;
+  password: string;
+  profile_image?: string;
+  role?: UserRole; // Por default es volunteer
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -34,14 +43,7 @@ export class AuthController {
   @Post('register')
   async register(
     @Body()
-    body: {
-      complete_name: string;
-      username: string;
-      email: string;
-      password: string;
-      profile_image?: string;
-      role?: UserRole; // Por default es volunteer
-    },
+    body: RegisterUserDTO,
   ) {
     const { complete_name, username, email, password, profile_image, role } =
       body;

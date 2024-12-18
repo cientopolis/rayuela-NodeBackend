@@ -6,6 +6,7 @@ import {
   ProjectDocument,
   ProjectTemplate,
 } from '../project/persistence/project.schema';
+import { User } from '../auth/users/user.entity';
 
 @Injectable()
 export class VolunteerService {
@@ -15,16 +16,16 @@ export class VolunteerService {
   ) {}
 
   async subscribeToProject(user: UserJWT, projectId: string) {
-    const dbUser: any = await this.userService.getByUserId(user.userId);
+    const dbUser: User = await this.userService.getByUserId(user.userId);
 
-    let newProjects: ProjectDocument[] = [];
+    let newProjects: string[] = [];
     if (dbUser.projects.includes(projectId)) {
-      newProjects = dbUser._doc.projects.filter((p: string) => p !== projectId);
+      newProjects = dbUser.projects.filter((p: string) => p !== projectId);
     } else {
-      newProjects = dbUser._doc.projects.concat([projectId]);
+      newProjects = dbUser.projects.concat([projectId]);
     }
     return this.userService.update(user.userId, {
-      ...dbUser._doc,
+      ...dbUser,
       projects: newProjects,
     });
   }
@@ -43,7 +44,7 @@ export class VolunteerService {
       return {
         ...p,
         subscribed: Boolean(
-          user.projects.find((pid) => pid === p._id.toString()),
+          user?.projects?.find((pid) => pid === p._id.toString()),
         ),
       };
     });

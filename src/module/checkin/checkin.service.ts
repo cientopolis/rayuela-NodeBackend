@@ -5,21 +5,25 @@ import { CheckInDao } from './persistence/checkin.dao';
 import { TaskService } from '../task/task.service';
 import { Task } from '../task/entities/task.entity';
 import { Checkin } from './entities/checkin.entity';
+import { UserService } from '../auth/users/user.service';
+import { Move } from './entities/move.entity';
 
 @Injectable()
 export class CheckinService {
   constructor(
     private readonly checkInDao: CheckInDao,
     private readonly taskService: TaskService,
+    private readonly userService: UserService,
   ) {}
 
   async create(createCheckinDto: CreateCheckinDto) {
     const tasks: Task[] = await this.taskService.findByProjectId(
       createCheckinDto.projectId,
     );
+    const user = await this.userService.getByUserId(createCheckinDto.userId);
     const checkin = Checkin.fromDTO(createCheckinDto);
-    const contributionTask = tasks.find((task) => task.accept(checkin));
-    checkin.validateContribution(contributionTask?.getId() || '');
+    const move = new Move(user, checkin, tasks);
+    console.log(move);
     return this.checkInDao.create(checkin);
   }
 
