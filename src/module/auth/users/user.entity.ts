@@ -1,7 +1,10 @@
 import { UserRole } from './user.schema';
-import { points } from '@turf/helpers';
 
 export class User {
+  get badges(): string[] {
+    return this._badges;
+  }
+
   get id(): string {
     return this._id;
   }
@@ -19,6 +22,7 @@ export class User {
   private _verified: boolean;
   private _role: UserRole;
   private _projects: string[];
+  private _badges: string[];
   private _id: string;
 
   constructor(
@@ -32,6 +36,7 @@ export class User {
     role: UserRole = UserRole.Volunteer,
     projects: string[] = [],
     id?: string,
+    badges: string[] = [],
   ) {
     this._completeName = completeName;
     this._points = points;
@@ -43,6 +48,7 @@ export class User {
     this._role = role;
     this._projects = projects;
     this._id = id;
+    this._badges = badges;
   }
 
   // Getters
@@ -122,6 +128,10 @@ export class User {
     }
   }
 
+  addBadges(badges: string[]): void {
+    this._badges = this.badges.concat(badges);
+  }
+
   removeProject(projectId: string): void {
     this._projects = this._projects.filter((id) => id !== projectId);
   }
@@ -132,5 +142,9 @@ export class User {
 
   verifyAccount(): void {
     this._verified = true;
+  }
+
+  addPoints(newPoints: number) {
+    this._points += newPoints;
   }
 }

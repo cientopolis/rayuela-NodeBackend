@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { UserDocument, UserTemplate } from './user.schema';
 import { User } from './user.entity';
 import { UserMapper } from './UserMapper';
-import { RegisterUserDTO } from '../auth.controller';
 
 @Injectable()
 export class UserDao {
@@ -34,12 +33,20 @@ export class UserDao {
     return userDocument ? UserMapper.toEntity(userDocument) : null;
   }
 
-  async update(id: string, userData: any): Promise<User | null> {
+  async update(id: string, userData: User): Promise<User | null> {
     const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: id }, userData, {
+      .findOneAndUpdate({ _id: id }, UserMapper.toTemplate(userData), {
         new: true, // Devuelve el documento actualizado
       })
       .exec();
     return updatedUser ? UserMapper.toEntity(updatedUser) : null;
+  }
+
+  async getAllByProjectId(projectId: string): Promise<User[]> {
+    const userDocuments = await this.userModel
+      .find({ projects: projectId }) // Verifica directamente si projectId está en el array
+      .exec();
+
+    return userDocuments.map((doc) => UserMapper.toEntity(doc));
   }
 }

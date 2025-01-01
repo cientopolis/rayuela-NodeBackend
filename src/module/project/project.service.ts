@@ -4,6 +4,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectTemplate } from './persistence/project.schema';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { UserService } from '../auth/users/user.service';
+import { Project } from './entities/project';
 
 @Injectable()
 export class ProjectService {
@@ -19,7 +20,7 @@ export class ProjectService {
   async findOne(
     id: string,
     userId?: string,
-  ): Promise<ProjectTemplate & { userIsSubscribed?: boolean }> {
+  ): Promise<Project & { userIsSubscribed?: boolean }> {
     const project = await this.projectDao.findOne(id);
     if (userId) {
       const user = await this.userService.getByUserId(userId);

@@ -1,25 +1,42 @@
 import { Checkin } from './checkin.entity';
-import { User } from '../../auth/users/user.entity';
-import { Task } from '../../task/entities/task.entity';
+import { GameStatus } from './game.entity';
 
+export enum ScoreRate {
+  NO_RATE = 0,
+  ONE_STAR = 1,
+  TWO_STAR = 2,
+  THREE_STAR = 3,
+  FOUR_STAR = 4,
+  FIVE_STAR = 5,
+}
+
+// Constructor deberia recibir nuevos puntos, y nuevas insignias
 export class Move {
-  private checkin: Checkin;
-  private points: number;
-  private rate: number;
-  private contributesTo: Task;
-
-  constructor(user: User, checkin: Checkin, tasks: Task[]) {
-    this.checkin = checkin;
-    this.rate = 0; // 0 means no valuation
-    this.contributesTo = this.evaluateContributions(tasks, checkin);
-    this.points = this.calculatePoints(user, checkin);
+  get gameStatus(): GameStatus {
+    return this._gameStatus;
   }
 
-  private evaluateContributions(tasks: Task[], checkin: Checkin) {
-    return tasks.find((task) => task.accept(checkin)) || null;
+  get timestamp(): Date {
+    return this._timestamp;
   }
 
-  private calculatePoints(user: User, checkin: Checkin) {
-    return 10;
+  get score(): ScoreRate {
+    return this._score;
+  }
+
+  get checkin(): Checkin {
+    return this._checkin;
+  }
+
+  private _checkin: Checkin;
+  private _gameStatus: GameStatus;
+  private _score: ScoreRate;
+  private _timestamp: Date;
+
+  constructor(checkin: Checkin, gameStatus: GameStatus) {
+    this._checkin = checkin;
+    this._gameStatus = gameStatus;
+    this._score = ScoreRate.NO_RATE;
+    this._timestamp = new Date();
   }
 }

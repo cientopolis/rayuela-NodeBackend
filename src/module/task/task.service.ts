@@ -22,7 +22,9 @@ export class TaskService {
     if (!project.taskTypes.includes(createTaskDto.type)) {
       throw new BadRequestException('Task type is invalid');
     }
-    const area = project.areas.find((a) => a.id === createTaskDto.areaId);
+    const area = project.areas.features.find(
+      (a) => a.properties.id === createTaskDto.areaId,
+    );
     if (!area) {
       throw new BadRequestException('Area not found');
     }

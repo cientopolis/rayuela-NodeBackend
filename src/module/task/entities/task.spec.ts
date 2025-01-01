@@ -62,8 +62,9 @@ describe('Task', () => {
       '-73.9875',
       new Date('2024-09-16T15:00:00'),
       'project123',
-      'user123',
+      null,
       'type',
+      'id',
     );
   });
 

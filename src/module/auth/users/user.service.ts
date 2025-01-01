@@ -17,11 +17,15 @@ export class UserService {
     return this.userDao.create(userData);
   }
 
-  async update(id: string, userData: any): Promise<User> {
+  async update(id: string, userData: User): Promise<User> {
     return this.userDao.update(id, userData);
   }
 
   async getByUserId(userId: string): Promise<User | null> {
     return await this.userDao.getUserById(userId);
+  }
+
+  async findAllByProjectId(projectId: string): Promise<User[]> {
+    return await this.userDao.getAllByProjectId(projectId);
   }
 }

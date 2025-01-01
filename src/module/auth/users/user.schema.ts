@@ -37,6 +37,9 @@ export class UserTemplate {
   @Prop({ type: [String], default: [] })
   projects: string[]; // IDs de proyectos asociados al usuario
 
+  @Prop({ type: [String], default: [] })
+  badges: string[]; // nombres de los badges.
+
   static collectionName() {
     return 'Users';
   }

@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserJWT } from '../auth/auth.service';
 import { UserService } from '../auth/users/user.service';
 import { ProjectService } from '../project/project.service';
-import {
-  ProjectDocument,
-  ProjectTemplate,
-} from '../project/persistence/project.schema';
+import { ProjectTemplate } from '../project/persistence/project.schema';
 import { User } from '../auth/users/user.entity';
 
 @Injectable()
@@ -24,10 +21,8 @@ export class VolunteerService {
     } else {
       newProjects = dbUser.projects.concat([projectId]);
     }
-    return this.userService.update(user.userId, {
-      ...dbUser,
-      projects: newProjects,
-    });
+    dbUser.projects = newProjects;
+    return this.userService.update(user.userId, dbUser);
   }
 
   async findProjects(userId) {

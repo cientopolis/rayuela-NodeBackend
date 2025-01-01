@@ -13,7 +13,8 @@ export class UserMapper {
       userDocument.verified,
       userDocument.role,
       userDocument.projects,
-      userDocument._id
+      userDocument._id,
+      userDocument.badges,
     );
   }
 
@@ -29,6 +30,7 @@ export class UserMapper {
       verified: user.verified,
       role: user.role,
       projects: user.projects,
-    } as UserTemplate; // Cast explícito para ajustarse al esquema
+      badges: user.badges,
+    };
   }
 }

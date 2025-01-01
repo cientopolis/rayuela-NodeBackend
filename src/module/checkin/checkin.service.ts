@@ -7,13 +7,21 @@ import { Task } from '../task/entities/task.entity';
 import { Checkin } from './entities/checkin.entity';
 import { UserService } from '../auth/users/user.service';
 import { Move } from './entities/move.entity';
+import { GameBuilder } from './entities/game.entity';
+import { BasicPointsEngine } from './entities/engine/basic-points-engine';
+import { BasicBadgeEngine } from './entities/engine/basic-badge-engine';
+import { BasicLeaderbardEngine } from './entities/engine/basic-leaderboard-engine';
+import { ProjectService } from '../project/project.service';
+import { MoveDao } from './persistence/move.dao';
 
 @Injectable()
 export class CheckinService {
   constructor(
     private readonly checkInDao: CheckInDao,
+    private readonly moveDao: MoveDao,
     private readonly taskService: TaskService,
     private readonly userService: UserService,
+    private readonly projectService: ProjectService,
   ) {}
 
   async create(createCheckinDto: CreateCheckinDto) {
@@ -21,10 +29,43 @@ export class CheckinService {
       createCheckinDto.projectId,
     );
     const user = await this.userService.getByUserId(createCheckinDto.userId);
-    const checkin = Checkin.fromDTO(createCheckinDto);
-    const move = new Move(user, checkin, tasks);
-    console.log(move);
-    return this.checkInDao.create(checkin);
+    const users = await this.userService.findAllByProjectId(
+      createCheckinDto.projectId,
+    );
+    const checkin = Checkin.fromDTO(createCheckinDto, user);
+    const project = await this.projectService.findOne(
+      createCheckinDto.projectId,
+    );
+
+    checkin.contributesTo = tasks.find((t) => t.accept(checkin))?.getId();
+    const game = new GameBuilder()
+      .withPointsEngine(new BasicPointsEngine())
+      .withBadgeEngine(new BasicBadgeEngine())
+      .withLeaderboardEngine(new BasicLeaderbardEngine())
+      .withTasks(tasks)
+      .withUsers(users)
+      .withProject(project)
+      .build();
+    const gameStatus = game.play(checkin);
+    const move = new Move(checkin, gameStatus);
+
+    user.addBadges(gameStatus.newBadges);
+    user.addPoints(gameStatus.newPoints);
+
+    await this.userService.update(user.id, user);
+    const c = await this.checkInDao.create(checkin);
+    checkin.id = c['_id'];
+    await this.moveDao.create(move);
+    const contribution = tasks.find(
+      (t) => t.getId() === move.checkin.contributesTo,
+    );
+    return {
+      ...move,
+      contributesTo: contribution && {
+        name: contribution.name,
+        id: contribution.getId(),
+      },
+    };
   }
 
   async findAll() {

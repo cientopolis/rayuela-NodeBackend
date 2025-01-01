@@ -56,7 +56,7 @@ export class CheckInDao {
       checkin.longitude,
       checkin.date,
       checkin.projectId,
-      checkin.userId,
+      checkin.user.id,
       checkin.contributesTo,
     );
   }
