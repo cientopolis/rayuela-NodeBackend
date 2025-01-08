@@ -59,7 +59,7 @@ export class MoveDao {
       userId: move.checkin.user.id,
       score: move.score,
       timestamp: move.timestamp,
-      newBadges: move.gameStatus.newBadges,
+      newBadges: move.gameStatus.newBadges.map((badge) => badge.name),
       newPoints: move.gameStatus.newPoints,
     };
   }

@@ -49,8 +49,11 @@ export class CheckinService {
     const gameStatus = game.play(checkin);
     const move = new Move(checkin, gameStatus);
 
-    user.addBadges(gameStatus.newBadges);
-    user.addPoints(gameStatus.newPoints);
+    user.addBadgeFromProject(
+      gameStatus.newBadges.map((b) => b.name),
+      createCheckinDto.projectId,
+    );
+    user.addPointsFromProject(gameStatus.newPoints, createCheckinDto.projectId);
 
     await this.userService.update(user.id, user);
     const c = await this.checkInDao.create(checkin);

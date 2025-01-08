@@ -39,7 +39,7 @@ export class UserDao {
         new: true, // Devuelve el documento actualizado
       })
       .exec();
-    return updatedUser ? UserMapper.toEntity(updatedUser) : null;
+    return updatedUser ? UserMapper.toEntity(updatedUser['_doc']) : null;
   }
 
   async getAllByProjectId(projectId: string): Promise<User[]> {

@@ -15,13 +15,7 @@ export class VolunteerService {
   async subscribeToProject(user: UserJWT, projectId: string) {
     const dbUser: User = await this.userService.getByUserId(user.userId);
 
-    let newProjects: string[] = [];
-    if (dbUser.projects.includes(projectId)) {
-      newProjects = dbUser.projects.filter((p: string) => p !== projectId);
-    } else {
-      newProjects = dbUser.projects.concat([projectId]);
-    }
-    dbUser.projects = newProjects;
+    dbUser.addProject(projectId);
     return this.userService.update(user.userId, dbUser);
   }
 
@@ -33,13 +27,13 @@ export class VolunteerService {
 
   private mapSubscriptions(
     projects: (ProjectTemplate & { _id: string })[],
-    user,
+    user: User,
   ) {
     return projects.map((p) => {
       return {
         ...p,
         subscribed: Boolean(
-          user?.projects?.find((pid) => pid === p._id.toString()),
+          user?.gameProfiles?.find((gp) => gp.projectId === p._id.toString()),
         ),
       };
     });

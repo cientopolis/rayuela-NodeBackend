@@ -41,14 +41,12 @@ export class AuthService {
     return await this.usersService.create(
       new User(
         registerDto.complete_name,
-        0,
         registerDto.username,
         registerDto.email,
         pw,
         registerDto.profile_image,
         false,
         registerDto.role,
-        [],
       ),
     );
   }

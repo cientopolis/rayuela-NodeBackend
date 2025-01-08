@@ -2,13 +2,14 @@ import { Project } from '../../project/entities/project';
 import { Checkin } from './checkin.entity';
 import { Task } from '../../task/entities/task.entity';
 import { User } from '../../auth/users/user.entity';
+import { BadgeRule } from '../../gamification/entities/gamification.entity';
 
 export interface PointsEngine {
   reward(list: Task[], ch: Checkin): number;
 }
 
 export interface BadgeEngine {
-  newBadgesFor(u: User, ch: Checkin, project: Project): string[]; // Badge's names
+  newBadgesFor(u: User, ch: Checkin, project: Project): BadgeRule[]; // Badge's names
 }
 
 export interface LeaderboardEngine {
@@ -16,7 +17,7 @@ export interface LeaderboardEngine {
 }
 
 export interface GameStatus {
-  newBadges: string[];
+  newBadges: BadgeRule[];
   newLeaderboard: User[];
   newPoints: number;
 }

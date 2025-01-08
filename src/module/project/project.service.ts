@@ -5,6 +5,13 @@ import { ProjectTemplate } from './persistence/project.schema';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { UserService } from '../auth/users/user.service';
 import { Project } from './entities/project';
+import { BadgeRule } from '../gamification/entities/gamification.entity';
+
+export interface UserStatus {
+  isSubscribed: boolean;
+  badges: BadgeRule[];
+  points: number;
+}
 
 @Injectable()
 export class ProjectService {
@@ -20,11 +27,21 @@ export class ProjectService {
   async findOne(
     id: string,
     userId?: string,
-  ): Promise<Project & { userIsSubscribed?: boolean }> {
+  ): Promise<Project & { user?: UserStatus }> {
     const project = await this.projectDao.findOne(id);
     if (userId) {
       const user = await this.userService.getByUserId(userId);
-      return { ...project, userIsSubscribed: user.projects.includes(id) };
+      const gp = user.gameProfiles.find((gp) => gp.projectId === id);
+      return {
+        ...project,
+        user: gp && {
+          isSubscribed: !!gp,
+          badges: project.gamification.badgesRules.filter((b) =>
+            gp.badges.includes(b.name),
+          ),
+          points: gp?.points,
+        },
+      };
     }
     return project;
   }

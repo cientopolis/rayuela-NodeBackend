@@ -1,8 +1,15 @@
 import { UserRole } from './user.schema';
 
+export interface GameProfile {
+  projectId: string;
+  points: number;
+  badges: string[]; //badge name
+  active: boolean;
+}
+
 export class User {
-  get badges(): string[] {
-    return this._badges;
+  get gameProfiles(): GameProfile[] {
+    return this._gameProfiles;
   }
 
   get id(): string {
@@ -14,41 +21,35 @@ export class User {
   }
 
   private _completeName: string;
-  private _points: number;
   private _username: string;
   private _email: string;
   private _password: string;
   private _profileImage: string | null;
   private _verified: boolean;
   private _role: UserRole;
-  private _projects: string[];
-  private _badges: string[];
   private _id: string;
+  private _gameProfiles: GameProfile[];
 
   constructor(
     completeName: string,
-    points: number,
     username: string,
     email: string,
     password: string,
     profileImage: string | null = null,
     verified: boolean = false,
     role: UserRole = UserRole.Volunteer,
-    projects: string[] = [],
     id?: string,
-    badges: string[] = [],
+    gameProfiles: GameProfile[] = [],
   ) {
     this._completeName = completeName;
-    this._points = points;
     this._username = username;
     this._email = email;
     this._password = password;
     this._profileImage = profileImage;
     this._verified = verified;
     this._role = role;
-    this._projects = projects;
     this._id = id;
-    this._badges = badges;
+    this._gameProfiles = gameProfiles;
   }
 
   // Getters
@@ -59,10 +60,6 @@ export class User {
 
   get completeName(): string {
     return this._completeName;
-  }
-
-  get points(): number {
-    return this._points;
   }
 
   get username(): string {
@@ -85,17 +82,9 @@ export class User {
     return this._role;
   }
 
-  get projects(): string[] {
-    return this._projects;
-  }
-
   // Setters
   set completeName(value: string) {
     this._completeName = value;
-  }
-
-  set points(value: number) {
-    this._points = value;
   }
 
   set username(value: string) {
@@ -118,33 +107,40 @@ export class User {
     this._role = value;
   }
 
-  set projects(value: string[]) {
-    this._projects = value;
-  }
-
-  addProject(projectId: string): void {
-    if (!this._projects.includes(projectId)) {
-      this._projects.push(projectId);
-    }
-  }
-
-  addBadges(badges: string[]): void {
-    this._badges = this.badges.concat(badges);
-  }
-
-  removeProject(projectId: string): void {
-    this._projects = this._projects.filter((id) => id !== projectId);
-  }
-
-  incrementPoints(amount: number): void {
-    this._points += amount;
-  }
-
   verifyAccount(): void {
     this._verified = true;
   }
 
-  addPoints(newPoints: number) {
-    this._points += newPoints;
+  addBadgeFromProject(badges: string[], projectId: string) {
+    badges.forEach((b) => {
+      this.getGameProfileFromProject(projectId).badges.push(b);
+    });
+  }
+
+  getGameProfileFromProject(projectId: string) {
+    return this.gameProfiles.find((gp) => gp.projectId === projectId);
+  }
+
+  hasBadgeWithName(name: string) {
+    this.gameProfiles.find((gp) => gp.badges.includes(name));
+  }
+
+  addProject(projectId: string) {
+    let gameProfile = this.getGameProfileFromProject(projectId);
+    if (!gameProfile) {
+      this.gameProfiles.push({
+        projectId: projectId,
+        points: 0,
+        badges: [],
+        active: true,
+      });
+    } else {
+      gameProfile = this.getGameProfileFromProject(projectId);
+      gameProfile.active = !gameProfile.active;
+    }
+  }
+
+  addPointsFromProject(newPoints: number, projectId: string) {
+    this.getGameProfileFromProject(projectId).points += newPoints;
   }
 }

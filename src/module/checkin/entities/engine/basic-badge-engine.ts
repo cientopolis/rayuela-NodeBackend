@@ -8,12 +8,14 @@ import { TimeInterval } from '../../../task/entities/time-restriction.entity';
 import { GeoUtils } from '../../../task/utils/geoUtils';
 
 export class BasicBadgeEngine implements BadgeEngine {
-  newBadgesFor(u: User, ch: Checkin, project: Project): string[] {
-    return project.gamification.badgesRules
-      .filter(
-        (r) => this.ruleMatch(r, ch, project, u) && !u.badges.includes(r.name),
-      )
-      .map((r) => r.name);
+  newBadgesFor(u: User, ch: Checkin, project: Project): BadgeRule[] {
+    return project.gamification.badgesRules.filter(
+      (r) =>
+        this.ruleMatch(r, ch, project, u) &&
+        !u
+          .getGameProfileFromProject(project._id)
+          .badges.find((b) => b === r.name),
+    );
   }
 
   private ruleMatch(r: BadgeRule, checkin: Checkin, project: Project, u: User) {
@@ -71,6 +73,6 @@ export class BasicBadgeEngine implements BadgeEngine {
   }
 
   private userHasPreviousBadges(r: BadgeRule, u: User) {
-    return r.previousBadges.every((b) => u.badges.includes(b));
+    return r.previousBadges.every((b) => u.hasBadgeWithName(b));
   }
 }
