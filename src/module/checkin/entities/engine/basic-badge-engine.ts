@@ -65,10 +65,13 @@ export class BasicBadgeEngine implements BadgeEngine {
     const polygon = project.areas.features.find(
       (f) => f.properties.id == r.areaId,
     );
-    return GeoUtils.isPointInPolygon(
-      parseFloat(checkin.longitude),
-      parseFloat(checkin.latitude),
-      polygon.geometry,
+    return (
+      polygon &&
+      GeoUtils.isPointInPolygon(
+        parseFloat(checkin.longitude),
+        parseFloat(checkin.latitude),
+        polygon.geometry,
+      )
     );
   }
 
