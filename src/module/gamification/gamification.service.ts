@@ -5,6 +5,8 @@ import { UpdateGamificationDto } from './dto/update-gamification.dto';
 import { UpdateBadgeRuleDTO } from './dto/update-badge-rule-d-t.o';
 import { CreateScoreRuleDto } from './dto/create-score-rule-dto';
 import { UpdateScoreRuleDto } from './dto/update-score-rule.dto';
+import { Move } from '../checkin/entities/move.entity';
+import { Task } from '../task/entities/task.entity';
 
 @Injectable()
 export class GamificationService {
@@ -43,5 +45,9 @@ export class GamificationService {
 
   removeScoreRule(projectId: string, id: string) {
     return this.gamificationDao.deletePointRule(projectId, id);
+  }
+
+  saveMove(move: Move) {
+    return this.gamificationDao.saveMove(move);
   }
 }

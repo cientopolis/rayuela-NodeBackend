@@ -9,6 +9,7 @@ import { TaskDao } from './persistence/task.dao';
 import { Task } from './entities/task.entity';
 import { ProjectService } from '../project/project.service';
 import { TaskDocument } from './persistence/task.schema';
+import { BasicPointsEngine } from '../checkin/entities/engine/basic-points-engine';
 
 @Injectable()
 export class TaskService {
@@ -31,8 +32,13 @@ export class TaskService {
     return await this.taskDao.create(createTaskDto);
   }
 
-  async findRawByProjectId(projectId: string): Promise<TaskDocument[]> {
-    return await this.taskDao.getRawTasksByProject(projectId);
+  async findRawByProjectId(projectId: string): Promise<any> {
+    const project = await this.projectService.findOne(projectId);
+    const rawTasks = await this.taskDao.getRawTasksByProject(projectId);
+    return rawTasks.map((task) => ({
+      ...task['_doc'],
+      points: new BasicPointsEngine().calculatePoints(task, project),
+    }));
   }
 
   async findByProjectId(projectId: string): Promise<Task[]> {

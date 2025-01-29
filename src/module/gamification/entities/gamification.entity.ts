@@ -1,3 +1,5 @@
+import { TaskDocument } from '../../task/persistence/task.schema';
+
 export class Gamification {
   constructor(
     projectId: string,
@@ -8,6 +10,7 @@ export class Gamification {
     this.badgesRules = badgesRules;
     this.pointRules = pointRules;
   }
+
   projectId: string;
   badgesRules: BadgeRule[];
   pointRules: PointRule[];
@@ -39,6 +42,7 @@ export class BadgeRule {
     this.areaId = areaId;
     this.timeIntervalId = timeIntervalId;
   }
+
   _id: string;
   projectId: string;
   name: string;
@@ -78,4 +82,28 @@ export class PointRule {
     this.score = score;
     this.mustContribute = mustContribute;
   }
+
+  matchTimeInterval(timeIntervalId: string) {
+    return (
+      this.timeIntervalId === timeIntervalId || this.timeIntervalId === ANY_KIND
+    );
+  }
+
+  matchArea(areaId: string) {
+    return this.areaId === areaId || this.areaId === ANY_KIND;
+  }
+
+  matchTaskType(taskType: string) {
+    return this.taskType === taskType || this.taskType === ANY_KIND;
+  }
+
+  matchTask(task: TaskDocument) {
+    return (
+      this.matchTaskType(task.type) &&
+      this.matchArea(task.areaId.toString()) &&
+      this.matchTimeInterval(task.timeIntervalId.toString())
+    );
+  }
 }
+
+const ANY_KIND = 'Cualquiera';

@@ -23,7 +23,7 @@ export class GamificationController {
     return this.gamificationService.createBadge(createBadgeDto);
   }
 
-  @Patch('gamification/:id')
+  @Patch('badge/:id')
   updateBadge(
     @Body() updateBadgeDTO: UpdateBadgeRuleDTO,
     @Param('id') id: string,
@@ -31,7 +31,7 @@ export class GamificationController {
     return this.gamificationService.updateBadge(id, updateBadgeDTO);
   }
 
-  @Delete('/:projectId/gamification/:id')
+  @Delete('/:projectId/badge/:id')
   remove(@Param('projectId') projectId: string, @Param('id') id: string) {
     return this.gamificationService.removeBadge(projectId, id);
   }

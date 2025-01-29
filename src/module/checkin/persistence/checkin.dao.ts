@@ -61,7 +61,7 @@ export class CheckInDao {
     );
   }
 
-  findByProjectId(projectId: string) {
-    return this.checkInModel.find({ projectId }).exec();
+  findByProjectId(userId: string, projectId: string) {
+    return this.checkInModel.find({ projectId, userId }).exec();
   }
 }

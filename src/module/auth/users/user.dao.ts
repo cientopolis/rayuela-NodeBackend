@@ -44,7 +44,11 @@ export class UserDao {
 
   async getAllByProjectId(projectId: string): Promise<User[]> {
     const userDocuments = await this.userModel
-      .find({ projects: projectId }) // Verifica directamente si projectId está en el array
+      .find({
+        gameProfiles: {
+          $elemMatch: { projectId: projectId },
+        },
+      })
       .exec();
 
     return userDocuments.map((doc) => UserMapper.toEntity(doc));

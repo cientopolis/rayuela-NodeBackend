@@ -122,7 +122,7 @@ export class User {
   }
 
   hasBadgeWithName(name: string) {
-    this.gameProfiles.find((gp) => gp.badges.includes(name));
+    return !!this.gameProfiles.find((gp) => gp.badges.includes(name));
   }
 
   addProject(projectId: string) {

@@ -21,9 +21,11 @@ export class BasicBadgeEngine implements BadgeEngine {
   private ruleMatch(r: BadgeRule, checkin: Checkin, project: Project, u: User) {
     return (
       this.userHasPreviousBadges(r, u) &&
-      this.matchTaskType(r, checkin, project) &&
-      this.matchTimeInterval(r, checkin, project) &&
-      this.matchArea(r, checkin, project)
+      (r.mustContribute
+        ? this.matchTaskType(r, checkin, project) &&
+          this.matchTimeInterval(r, checkin, project) &&
+          this.matchArea(r, checkin, project)
+        : true)
     );
   }
 
@@ -62,6 +64,9 @@ export class BasicBadgeEngine implements BadgeEngine {
   }
 
   private matchArea(r: BadgeRule, checkin: Checkin, project: Project) {
+    if (r.areaId === 'Cualquiera') {
+      return true;
+    }
     const polygon = project.areas.features.find(
       (f) => f.properties.id == r.areaId,
     );

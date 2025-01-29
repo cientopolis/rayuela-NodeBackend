@@ -6,11 +6,14 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { UserService } from '../auth/users/user.service';
 import { Project } from './entities/project';
 import { BadgeRule } from '../gamification/entities/gamification.entity';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
+import { Leaderboard } from '../leaderboard/persistence/leaderboard-user-schema';
 
 export interface UserStatus {
   isSubscribed: boolean;
   badges: BadgeRule[];
   points: number;
+  leaderboard: Leaderboard;
 }
 
 @Injectable()
@@ -18,6 +21,7 @@ export class ProjectService {
   constructor(
     private readonly projectDao: ProjectDao,
     private readonly userService: UserService,
+    private readonly leaderboardService: LeaderboardService,
   ) {}
 
   async findAll(): Promise<(ProjectTemplate & { _id: string })[]> {
@@ -40,6 +44,10 @@ export class ProjectService {
             gp.badges.includes(b.name),
           ),
           points: gp?.points,
+          leaderboard: await this.leaderboardService.getLeaderboardFor(
+            project._id,
+            userId,
+          ),
         },
       };
     }

@@ -16,12 +16,15 @@ import { UpdateGamificationDto } from '../dto/update-gamification.dto';
 import { UpdateBadgeRuleDTO } from '../dto/update-badge-rule-d-t.o';
 import { CreateScoreRuleDto } from '../dto/create-score-rule-dto';
 import { UpdateScoreRuleDto } from '../dto/update-score-rule.dto';
+import { Move } from '../../checkin/entities/move.entity';
+import { LeaderboardDao } from '../../leaderboard/persistence/leaderboard.dao';
 
 @Injectable()
 export class GamificationDao {
   constructor(
     @InjectModel(GamificationTemplate.collectionName())
     private readonly gamificationModel: Model<GamificationTemplateDocument>,
+    private readonly leaderboardDAO: LeaderboardDao,
   ) {}
 
   async addBadge(
@@ -116,7 +119,6 @@ export class GamificationDao {
       .findOneAndUpdate(
         { projectId, 'pointRules._id': updatedRule._id },
         { $set: { 'pointRules.$': updatedRule } },
-        { new: true },
       )
       .exec();
   }
@@ -177,7 +179,7 @@ export class GamificationDao {
       throw new Error('Project not found');
     }
     gamificationTemplate.badges = gamificationTemplate.badges
-      .filter((b) => b._id === id)
+      .filter((b) => b._id !== id)
       .concat([updateBadgeDTO as BadgeTemplate]);
     return gamificationTemplate.save();
   }
@@ -188,5 +190,12 @@ export class GamificationDao {
       badges: [],
       pointRules: [],
     });
+  }
+
+  saveMove(move: Move) {
+    return this.leaderboardDAO.updateLeaderboardUsers(
+      move.checkin.projectId,
+      move.gameStatus.newLeaderboard,
+    );
   }
 }

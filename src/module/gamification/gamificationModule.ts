@@ -8,6 +8,7 @@ import {
 } from './persistence/gamification.schema';
 import { GamificationDao } from './persistence/gamification-dao.service';
 import { AuthModule } from '../auth/auth.module';
+import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from '../auth/auth.module';
       },
     ]),
     AuthModule,
+    LeaderboardModule,
   ],
   exports: [GamificationService, GamificationDao],
   controllers: [GamificationController],

@@ -6,9 +6,11 @@ import { ProjectTemplate, ProjectSchema } from './persistence/project.schema';
 import { ProjectDao } from './persistence/project.dao';
 import { AuthModule } from '../auth/auth.module';
 import { GamificationModule } from '../gamification/gamificationModule';
+import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 
 @Module({
   imports: [
+    LeaderboardModule,
     MongooseModule.forFeature([
       { name: ProjectTemplate.collectionName(), schema: ProjectSchema },
     ]),

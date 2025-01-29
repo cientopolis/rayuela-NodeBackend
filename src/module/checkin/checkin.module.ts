@@ -9,6 +9,7 @@ import { TaskModule } from '../task/task.module';
 import { ProjectModule } from '../project/project.module';
 import { MoveSchema, MoveTemplate } from './persistence/move.schema';
 import { MoveDao } from './persistence/move.dao';
+import { GamificationModule } from '../gamification/gamificationModule';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MoveDao } from './persistence/move.dao';
     AuthModule,
     TaskModule,
     ProjectModule,
+    GamificationModule,
   ],
   exports: [CheckinService],
   controllers: [CheckinController],

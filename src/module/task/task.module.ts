@@ -7,6 +7,7 @@ import { TaskDao } from './persistence/task.dao';
 import { TaskSchema, TaskSchemaTemplate } from './persistence/task.schema';
 import { ProjectService } from '../project/project.service';
 import { ProjectModule } from '../project/project.module';
+import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProjectModule } from '../project/project.module';
     ]),
     AuthModule,
     ProjectModule,
+    LeaderboardModule,
   ],
   controllers: [TaskController],
   providers: [TaskService, TaskDao, ProjectService],

@@ -7,6 +7,7 @@ import { UpdateProjectDto } from '../dto/update-project.dto';
 import { Project } from '../entities/project';
 import { GamificationDao } from '../../gamification/persistence/gamification-dao.service';
 import { Gamification } from '../../gamification/entities/gamification.entity';
+import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 @Injectable()
 export class ProjectDao {
@@ -18,6 +19,11 @@ export class ProjectDao {
 
   async findAll(): Promise<Project[]> {
     return (await this.projectModel.find().exec()) as unknown as Project[];
+  }
+
+  mapTimeIntervalFromDB(ti: any): TimeInterval {
+    const { time, name, days, startDate, endDate } = ti['_doc'];
+    return new TimeInterval(name, days, time, startDate, endDate);
   }
 
   async findOne(id: string): Promise<Project> {
@@ -32,7 +38,7 @@ export class ProjectDao {
       name: project.name,
       description: project.description,
       available: project.available,
-      timeIntervals: project.timeIntervals,
+      timeIntervals: project.timeIntervals.map(this.mapTimeIntervalFromDB),
       taskTypes: project.taskTypes,
       web: project.web,
       image: project.image,

@@ -35,6 +35,13 @@ export class CheckinController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('user/:projectId')
+  async findUserCheckins(@Req() req, @Param('projectId') projectId: string) {
+    const userId = req.user.userId;
+    return this.checkinService.findByProjectId(userId, projectId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll() {
     return this.checkinService.findAll();

@@ -11,8 +11,11 @@ import { GameBuilder } from './entities/game.entity';
 import { BasicPointsEngine } from './entities/engine/basic-points-engine';
 import { BasicBadgeEngine } from './entities/engine/basic-badge-engine';
 import { BasicLeaderbardEngine } from './entities/engine/basic-leaderboard-engine';
-import { ProjectService } from '../project/project.service';
+import { ProjectService, UserStatus } from '../project/project.service';
 import { MoveDao } from './persistence/move.dao';
+import { GamificationService } from '../gamification/gamification.service';
+import { Project } from '../project/entities/project';
+import { User } from '../auth/users/user.entity';
 
 @Injectable()
 export class CheckinService {
@@ -22,30 +25,16 @@ export class CheckinService {
     private readonly taskService: TaskService,
     private readonly userService: UserService,
     private readonly projectService: ProjectService,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   async create(createCheckinDto: CreateCheckinDto) {
-    const tasks: Task[] = await this.taskService.findByProjectId(
-      createCheckinDto.projectId,
-    );
-    const user = await this.userService.getByUserId(createCheckinDto.userId);
-    const users = await this.userService.findAllByProjectId(
-      createCheckinDto.projectId,
-    );
-    const checkin = Checkin.fromDTO(createCheckinDto, user);
-    const project = await this.projectService.findOne(
-      createCheckinDto.projectId,
-    );
+    const { tasks, user, users, checkin, project } =
+      await this.getDataFromDB(createCheckinDto);
+
+    const game = this.buildGame(tasks, users, project);
 
     checkin.contributesTo = tasks.find((t) => t.accept(checkin))?.getId();
-    const game = new GameBuilder()
-      .withPointsEngine(new BasicPointsEngine())
-      .withBadgeEngine(new BasicBadgeEngine())
-      .withLeaderboardEngine(new BasicLeaderbardEngine())
-      .withTasks(tasks)
-      .withUsers(users)
-      .withProject(project)
-      .build();
     const gameStatus = game.play(checkin);
     const move = new Move(checkin, gameStatus);
 
@@ -53,7 +42,6 @@ export class CheckinService {
       gameStatus.newBadges.map((b) => b.name),
       createCheckinDto.projectId,
     );
-    user.addPointsFromProject(gameStatus.newPoints, createCheckinDto.projectId);
 
     await this.userService.update(user.id, user);
     const c = await this.checkInDao.create(checkin);
@@ -62,6 +50,8 @@ export class CheckinService {
     const contribution = tasks.find(
       (t) => t.getId() === move.checkin.contributesTo,
     );
+
+    await this.gamificationService.saveMove(move);
     return {
       ...move,
       contributesTo: contribution && {
@@ -69,6 +59,21 @@ export class CheckinService {
         id: contribution.getId(),
       },
     };
+  }
+
+  private buildGame(
+    tasks: Task[],
+    users: User[],
+    project: Project & { user?: UserStatus },
+  ) {
+    return new GameBuilder()
+      .withPointsEngine(new BasicPointsEngine()) // o elastic con un checkbox en admin
+      .withBadgeEngine(new BasicBadgeEngine())
+      .withLeaderboardEngine(new BasicLeaderbardEngine())
+      .withTasks(tasks)
+      .withUsers(users)
+      .withProject(project)
+      .build();
   }
 
   async findAll() {
@@ -87,7 +92,22 @@ export class CheckinService {
     return this.checkInDao.remove(id);
   }
 
-  findByProjectId(projectId: string) {
-    return this.checkInDao.findByProjectId(projectId);
+  findByProjectId(userId: string, projectId: string) {
+    return this.checkInDao.findByProjectId(userId, projectId);
+  }
+
+  private async getDataFromDB(createCheckinDto: CreateCheckinDto) {
+    const tasks: Task[] = await this.taskService.findByProjectId(
+      createCheckinDto.projectId,
+    );
+    const user = await this.userService.getByUserId(createCheckinDto.userId);
+    const users = await this.userService.findAllByProjectId(
+      createCheckinDto.projectId,
+    );
+    const checkin = Checkin.fromDTO(createCheckinDto, user);
+    const project = await this.projectService.findOne(
+      createCheckinDto.projectId,
+    );
+    return { tasks, user, users, checkin, project };
   }
 }
