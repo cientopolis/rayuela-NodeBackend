@@ -83,6 +83,7 @@ export class TaskDao {
       this.mapTimeRestriction(doc.timeIntervalId, project),
       area,
       doc.type,
+      doc.solved,
     );
   }
 
@@ -117,5 +118,17 @@ export class TaskDao {
       throw new NotFoundException('No tasks found for this project');
     }
     return tasks;
+  }
+
+  async setTaskAsSolved(id: string): Promise<TaskDocument | null> {
+    const updatedTask = await this.taskModel
+      .findByIdAndUpdate(id, { solved: true }, { new: true })
+      .exec();
+
+    if (!updatedTask) {
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
+
+    return updatedTask;
   }
 }

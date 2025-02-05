@@ -5,14 +5,24 @@ export class CreateTaskDto {
   timeIntervalId: string;
   areaId: string;
   type: string;
+  solved: boolean = false;
 
-  constructor({ name, description, projectId, timeIntervalId, areaId, type }) {
+  constructor({
+    name,
+    description,
+    projectId,
+    timeIntervalId,
+    areaId,
+    type,
+    solved,
+  }) {
     this.name = name;
     this.description = description;
     this.projectId = projectId;
     this.timeIntervalId = timeIntervalId;
     this.areaId = areaId;
     this.type = type;
+    this.solved = solved;
   }
 
   static fromDTO({
@@ -22,6 +32,7 @@ export class CreateTaskDto {
     timeIntervalId,
     areaId,
     type,
+    solved,
   }) {
     return new CreateTaskDto({
       name,
@@ -30,6 +41,7 @@ export class CreateTaskDto {
       timeIntervalId,
       areaId,
       type,
+      solved,
     });
   }
 }

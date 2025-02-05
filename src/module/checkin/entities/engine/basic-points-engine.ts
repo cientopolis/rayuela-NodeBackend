@@ -1,10 +1,11 @@
-import { PointsEngine } from '../game.entity';
+import { Game, PointsEngine } from '../game.entity';
 import { Checkin } from '../checkin.entity';
 import { PointRule } from '../../../gamification/entities/gamification.entity';
 import { Project } from '../../../project/entities/project';
 import {
   Feature,
   FeatureCollection,
+  GamificationStrategy,
 } from '../../../project/dto/create-project.dto';
 import { GeoUtils } from '../../../task/utils/geoUtils';
 import { TimeInterval } from '../../../task/entities/time-restriction.entity';
@@ -12,15 +13,19 @@ import { TaskDocument } from '../../../task/persistence/task.schema';
 import { UserStatus } from '../../../project/project.service';
 
 export class BasicPointsEngine implements PointsEngine {
-  reward(ch: Checkin, project: Project): number {
+  assignableTo(project: Project): boolean {
+    return project.gamificationStrategy === GamificationStrategy.BASIC;
+  }
+
+  reward(ch: Checkin, game: Game): number {
     let newPoints = 0;
-    project.gamification.pointRules.forEach((r) => {
+    game.project.gamification.pointRules.forEach((r) => {
       if (
         this.checkinMatchRule(
           ch,
           r,
-          this.findArea(project.areas, r.areaId),
-          this.findTimeInterval(project.timeIntervals, r.timeIntervalId),
+          this.findArea(game.project.areas, r.areaId),
+          this.findTimeInterval(game.project.timeIntervals, r.timeIntervalId),
         )
       ) {
         newPoints += r.score;

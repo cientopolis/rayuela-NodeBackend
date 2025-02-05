@@ -3,12 +3,20 @@ import { Checkin } from './checkin.entity';
 import { Task } from '../../task/entities/task.entity';
 import { User } from '../../auth/users/user.entity';
 import { BadgeRule } from '../../gamification/entities/gamification.entity';
+import { BasicPointsEngine } from './engine/basic-points-engine';
+import { BasicBadgeEngine } from './engine/basic-badge-engine';
+import { BasicLeaderbardEngine } from './engine/basic-leaderboard-engine';
+import { ElasticPointsEngine } from './engine/elastic-points-engine';
 
-export interface PointsEngine {
-  reward(ch: Checkin, project: Project): number;
+interface Engine {
+  assignableTo(project: Project): boolean;
 }
 
-export interface BadgeEngine {
+export interface PointsEngine extends Engine {
+  reward(ch: Checkin, game: Game): number;
+}
+
+export interface BadgeEngine extends Engine {
   newBadgesFor(u: User, ch: Checkin, project: Project): BadgeRule[]; // Badge's names
 }
 
@@ -20,7 +28,7 @@ export interface LeaderboardUser {
   badges: string[];
 }
 
-export interface LeaderboardEngine {
+export interface LeaderboardEngine extends Engine {
   build(usersList: User[], u: User, project: Project): LeaderboardUser[];
 }
 
@@ -31,12 +39,20 @@ export interface GameStatus {
 }
 
 export class Game {
+  get users(): User[] {
+    return this._users;
+  }
+
+  get project(): Project {
+    return this._project;
+  }
+
   private leaderboardEngine: LeaderboardEngine;
-  private project: Project;
+  private _project: Project;
   private pointsEngine: PointsEngine;
   private badgeEngine: BadgeEngine;
   private tasks: Task[];
-  private users: User[];
+  private _users: User[];
 
   constructor(
     project: Project,
@@ -46,58 +62,50 @@ export class Game {
     tasks: Task[],
     users: User[],
   ) {
-    this.project = project;
+    this._project = project;
     this.pointsEngine = pointsEngine;
     this.badgeEngine = badgeEngine;
     this.leaderboardEngine = leaderboardEngine;
     this.tasks = tasks;
-    this.users = users;
+    this._users = users;
   }
 
   play(checkin: Checkin): GameStatus {
-    const newPoints = this.pointsEngine.reward(checkin, this.project);
-    checkin.user.addPointsFromProject(newPoints, this.project._id);
+    const newPoints = this.pointsEngine.reward(checkin, this);
+    checkin.user.addPointsFromProject(newPoints, this._project.id);
     return {
       newBadges: this.badgeEngine.newBadgesFor(
         checkin.user,
         checkin,
-        this.project,
+        this._project,
       ),
       newPoints,
       newLeaderboard: this.leaderboardEngine.build(
-        this.users,
+        this._users,
         checkin.user,
-        this.project,
+        this._project,
       ),
     };
   }
 }
 
 export class GameBuilder {
-  private leaderboardEngine: LeaderboardEngine | null = null;
   private project: Project | null = null;
-  private pointsEngine: PointsEngine | null = null;
-  private badgeEngine: BadgeEngine | null = null;
   private tasks: Task[] | null = null;
   private users: User[] | null = null;
 
-  withLeaderboardEngine(leaderboardEngine: LeaderboardEngine): this {
-    this.leaderboardEngine = leaderboardEngine;
-    return this;
-  }
+  private availablePointsEngine: PointsEngine[] = [
+    new BasicPointsEngine(),
+    new ElasticPointsEngine(),
+  ];
+
+  private availableBadgeEngine: BadgeEngine[] = [new BasicBadgeEngine()];
+  private availableLeaderboardEngine: LeaderboardEngine[] = [
+    new BasicLeaderbardEngine(),
+  ];
 
   withProject(project: Project): this {
     this.project = project;
-    return this;
-  }
-
-  withPointsEngine(pointsEngine: PointsEngine): this {
-    this.pointsEngine = pointsEngine;
-    return this;
-  }
-
-  withBadgeEngine(badgeEngine: BadgeEngine): this {
-    this.badgeEngine = badgeEngine;
     return this;
   }
 
@@ -112,23 +120,43 @@ export class GameBuilder {
   }
 
   build(): Game {
-    if (
-      !this.project ||
-      !this.pointsEngine ||
-      !this.badgeEngine ||
-      !this.leaderboardEngine
-    ) {
+    const pointsEngine = this.assignPointsEngine(this.project);
+    const leaderboardEngine = this.assignLeaderboardEngine();
+    const badgeEngine = this.assignBadgeEngine();
+    if (!this.project || !pointsEngine || !badgeEngine || !leaderboardEngine) {
       throw new Error(
         'All dependencies must be provided before building the Game instance',
       );
     }
     return new Game(
       this.project,
-      this.pointsEngine,
-      this.badgeEngine,
-      this.leaderboardEngine,
+      pointsEngine,
+      badgeEngine,
+      leaderboardEngine,
       this.tasks,
       this.users,
+    );
+  }
+
+  assignPointsEngine(project: Project): PointsEngine {
+    return (
+      this.availablePointsEngine.find((pe) => pe.assignableTo(project)) ||
+      this.availablePointsEngine[0]
+    );
+  }
+
+  private assignBadgeEngine(): BadgeEngine {
+    return (
+      this.availableBadgeEngine.find((be) => be.assignableTo(this.project)) ||
+      this.availableBadgeEngine[0]
+    );
+  }
+
+  private assignLeaderboardEngine(): LeaderboardEngine {
+    return (
+      this.availableLeaderboardEngine.find((le) =>
+        le.assignableTo(this.project),
+      ) || this.availableLeaderboardEngine[0]
     );
   }
 }

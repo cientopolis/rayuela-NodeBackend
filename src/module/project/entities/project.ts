@@ -1,6 +1,9 @@
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
 import { Gamification } from '../../gamification/entities/gamification.entity';
-import { FeatureCollection } from '../dto/create-project.dto';
+import {
+  FeatureCollection,
+  GamificationStrategy,
+} from '../dto/create-project.dto';
 
 export class Project {
   constructor(
@@ -15,8 +18,9 @@ export class Project {
     timeIntervals: TimeInterval[],
     ownerId: string,
     gamification: Gamification,
+    gamificationStrategy: GamificationStrategy,
   ) {
-    this._id = id;
+    this.id = id;
     this.name = name;
     this.description = description;
     this.image = image;
@@ -27,8 +31,10 @@ export class Project {
     this.timeIntervals = timeIntervals;
     this.ownerId = ownerId;
     this.gamification = gamification;
+    this.gamificationStrategy = gamificationStrategy;
   }
-  _id: string;
+
+  id: string;
   name: string;
   description: string;
   image: string;
@@ -39,4 +45,5 @@ export class Project {
   timeIntervals: TimeInterval[];
   ownerId: string;
   gamification: Gamification;
+  gamificationStrategy: GamificationStrategy;
 }

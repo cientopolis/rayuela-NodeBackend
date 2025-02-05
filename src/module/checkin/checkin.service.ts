@@ -34,7 +34,9 @@ export class CheckinService {
 
     const game = this.buildGame(tasks, users, project);
 
-    checkin.contributesTo = tasks.find((t) => t.accept(checkin))?.getId();
+    checkin.contributesTo = tasks
+      .find((t) => t.accept(checkin) && !t.solved)
+      ?.getId();
     const gameStatus = game.play(checkin);
     const move = new Move(checkin, gameStatus);
 
@@ -43,7 +45,6 @@ export class CheckinService {
       createCheckinDto.projectId,
     );
 
-    await this.userService.update(user.id, user);
     const c = await this.checkInDao.create(checkin);
     checkin.id = c['_id'];
     await this.moveDao.create(move);
@@ -51,7 +52,15 @@ export class CheckinService {
       (t) => t.getId() === move.checkin.contributesTo,
     );
 
+    if (contribution) {
+      contribution.setSolved(true);
+      user.addContribution(contribution.getId());
+      await this.taskService.setTaskAsSolved(contribution.getId());
+    }
+
+    await this.userService.update(user.id, user);
     await this.gamificationService.saveMove(move);
+
     return {
       ...move,
       contributesTo: contribution && {
@@ -67,9 +76,6 @@ export class CheckinService {
     project: Project & { user?: UserStatus },
   ) {
     return new GameBuilder()
-      .withPointsEngine(new BasicPointsEngine()) // o elastic con un checkbox en admin
-      .withBadgeEngine(new BasicBadgeEngine())
-      .withLeaderboardEngine(new BasicLeaderbardEngine())
       .withTasks(tasks)
       .withUsers(users)
       .withProject(project)

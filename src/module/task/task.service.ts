@@ -8,7 +8,6 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskDao } from './persistence/task.dao';
 import { Task } from './entities/task.entity';
 import { ProjectService } from '../project/project.service';
-import { TaskDocument } from './persistence/task.schema';
 import { BasicPointsEngine } from '../checkin/entities/engine/basic-points-engine';
 
 @Injectable()
@@ -65,5 +64,9 @@ export class TaskService {
     const count = await this.taskDao.deleteByProjectId(projectId);
     console.log(count + ' tasks deleted');
     return await this.taskDao.bulkSave(createTaskDtoList);
+  }
+
+  async setTaskAsSolved(id: string) {
+    return await this.taskDao.setTaskAsSolved(id);
   }
 }

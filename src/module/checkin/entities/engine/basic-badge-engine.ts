@@ -6,14 +6,19 @@ import { BadgeRule } from '../../../gamification/entities/gamification.entity';
 import { BadRequestException } from '@nestjs/common';
 import { TimeInterval } from '../../../task/entities/time-restriction.entity';
 import { GeoUtils } from '../../../task/utils/geoUtils';
+import { GamificationStrategy } from '../../../project/dto/create-project.dto';
 
 export class BasicBadgeEngine implements BadgeEngine {
+  assignableTo(project: Project): boolean {
+    return project.gamificationStrategy === GamificationStrategy.BASIC;
+  }
+
   newBadgesFor(u: User, ch: Checkin, project: Project): BadgeRule[] {
     return project.gamification.badgesRules.filter(
       (r) =>
         this.ruleMatch(r, ch, project, u) &&
         !u
-          .getGameProfileFromProject(project._id)
+          .getGameProfileFromProject(project.id)
           .badges.find((b) => b === r.name),
     );
   }

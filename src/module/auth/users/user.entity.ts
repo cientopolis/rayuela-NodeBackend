@@ -8,6 +8,10 @@ export interface GameProfile {
 }
 
 export class User {
+  get contributions(): string[] {
+    return this._contributions;
+  }
+
   get gameProfiles(): GameProfile[] {
     return this._gameProfiles;
   }
@@ -29,6 +33,7 @@ export class User {
   private _role: UserRole;
   private _id: string;
   private _gameProfiles: GameProfile[];
+  private _contributions: string[];
 
   constructor(
     completeName: string,
@@ -40,6 +45,7 @@ export class User {
     role: UserRole = UserRole.Volunteer,
     id?: string,
     gameProfiles: GameProfile[] = [],
+    contributions: string[] = [],
   ) {
     this._completeName = completeName;
     this._username = username;
@@ -50,6 +56,7 @@ export class User {
     this._role = role;
     this._id = id;
     this._gameProfiles = gameProfiles;
+    this._contributions = contributions;
   }
 
   // Getters
@@ -142,5 +149,9 @@ export class User {
 
   addPointsFromProject(newPoints: number, projectId: string) {
     this.getGameProfileFromProject(projectId).points += newPoints;
+  }
+
+  addContribution(taskId: string) {
+    this.contributions.push(taskId);
   }
 }

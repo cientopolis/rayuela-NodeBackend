@@ -2,28 +2,40 @@ import { Checkin } from '../../checkin/entities/checkin.entity';
 import { GeoUtils } from '../utils/geoUtils';
 import { TimeInterval } from './time-restriction.entity';
 import { Feature } from '../../project/dto/create-project.dto';
+
 export class Task {
+  get solved(): boolean {
+    return this.#solved;
+  }
+
   get timeInterval(): TimeInterval {
     return this.#timeInterval;
   }
+
   get type(): string {
     return this.#type;
   }
+
   get areaGeoJSON(): Feature {
     return this.#areaGeoJSON;
   }
+
   get description(): string {
     return this.#description;
   }
+
   get name(): string {
     return this.#name;
   }
+
   get projectId(): string {
     return this.#projectId;
   }
+
   getId(): string {
     return this.#_id;
   }
+
   #_id: string;
   #name: string;
   #description: string;
@@ -31,6 +43,7 @@ export class Task {
   #timeInterval: TimeInterval;
   #areaGeoJSON: Feature;
   #type: string;
+  #solved: boolean = false;
 
   constructor(
     id: string,
@@ -40,6 +53,7 @@ export class Task {
     timeRestriction: TimeInterval,
     area: Feature,
     type: string,
+    solved: boolean,
   ) {
     this.#_id = id;
     this.#name = name;
@@ -48,6 +62,7 @@ export class Task {
     this.#timeInterval = timeRestriction;
     this.#areaGeoJSON = area;
     this.#type = type;
+    this.#solved = solved;
   }
 
   accept(checkin: Checkin) {
@@ -93,5 +108,9 @@ export class Task {
 
   private isSameTaskType(checkin: Checkin) {
     return this.#type === checkin.taskType;
+  }
+
+  setSolved(solved: boolean) {
+    this.#solved = solved;
   }
 }

@@ -2,7 +2,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectDocument, ProjectTemplate } from './project.schema';
-import { CreateProjectDto, Feature } from '../dto/create-project.dto';
+import {
+  CreateProjectDto,
+  Feature,
+  GamificationStrategy,
+} from '../dto/create-project.dto';
 import { UpdateProjectDto } from '../dto/update-project.dto';
 import { Project } from '../entities/project';
 import { GamificationDao } from '../../gamification/persistence/gamification-dao.service';
@@ -33,22 +37,23 @@ export class ProjectDao {
     }
     const gamification: Gamification =
       await this.gamificationDao.getGamificationByProjectId(id);
-    return {
-      _id: id,
-      name: project.name,
-      description: project.description,
-      available: project.available,
-      timeIntervals: project.timeIntervals.map(this.mapTimeIntervalFromDB),
-      taskTypes: project.taskTypes,
-      web: project.web,
-      image: project.image,
-      ownerId: project.ownerId,
-      areas: {
+    return new Project(
+      id,
+      project.name,
+      project.description,
+      project.image,
+      project.web,
+      project.available,
+      {
         ...project.areas,
         features: project.areas.features.filter((f) => !f.properties.disabled),
       },
+      project.taskTypes,
+      project.timeIntervals.map(this.mapTimeIntervalFromDB),
+      project.ownerId,
       gamification,
-    };
+      project.gamificationStrategy as GamificationStrategy,
+    );
   }
 
   async create(

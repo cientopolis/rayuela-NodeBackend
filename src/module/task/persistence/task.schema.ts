@@ -23,6 +23,9 @@ export class TaskSchemaTemplate {
   @Prop({ required: true })
   type: string;
 
+  @Prop({ required: true, default: false })
+  solved: boolean;
+
   static collectionName() {
     return 'Task';
   }

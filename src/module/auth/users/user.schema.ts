@@ -35,6 +35,9 @@ export class UserTemplate {
   @Prop({ type: Array, default: [] })
   gameProfiles: GameProfile[];
 
+  @Prop({ type: Array, default: [] })
+  contributions: string[]; // tasks id
+
   static collectionName() {
     return 'Users';
   }

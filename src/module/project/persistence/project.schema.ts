@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
+import { GamificationStrategy } from '../dto/create-project.dto';
 
 export type ProjectDocument = ProjectTemplate & Document;
 
@@ -26,6 +27,9 @@ export class ProjectTemplate {
 
   @Prop({ type: [String], default: [] })
   taskTypes: string[];
+
+  @Prop({ default: GamificationStrategy.BASIC })
+  gamificationStrategy: string;
 
   @Prop({
     required: true,

@@ -13,6 +13,7 @@ export class UserMapper {
       userDocument.role,
       userDocument._id,
       userDocument.gameProfiles,
+      userDocument.contributions,
     );
   }
 
@@ -27,6 +28,7 @@ export class UserMapper {
       verified: user.verified,
       role: user.role,
       gameProfiles: user.gameProfiles,
+      contributions: user.contributions,
     };
   }
 }

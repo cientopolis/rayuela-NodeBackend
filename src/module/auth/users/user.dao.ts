@@ -36,7 +36,7 @@ export class UserDao {
   async update(id: string, userData: User): Promise<User | null> {
     const updatedUser = await this.userModel
       .findOneAndUpdate({ _id: id }, UserMapper.toTemplate(userData), {
-        new: true, // Devuelve el documento actualizado
+        new: true,
       })
       .exec();
     return updatedUser ? UserMapper.toEntity(updatedUser['_doc']) : null;
