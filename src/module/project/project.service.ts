@@ -40,9 +40,10 @@ export class ProjectService {
         ...project,
         user: gp && {
           isSubscribed: !!gp,
-          badges: project.gamification.badgesRules.filter((b) =>
-            gp.badges.includes(b.name),
-          ),
+          badges: project.gamification.badgesRules.map((b) => ({
+            ...b,
+            active: gp.badges.includes(b.name),
+          })),
           points: gp?.points,
           leaderboard: await this.leaderboardService.getLeaderboardFor(
             project.id,

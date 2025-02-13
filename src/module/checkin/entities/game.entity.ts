@@ -39,6 +39,10 @@ export interface GameStatus {
 }
 
 export class Game {
+  set users(value: User[]) {
+    this._users = value;
+  }
+
   get users(): User[] {
     return this._users;
   }

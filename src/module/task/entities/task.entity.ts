@@ -53,7 +53,7 @@ export class Task {
     timeRestriction: TimeInterval,
     area: Feature,
     type: string,
-    solved: boolean,
+    solved: boolean = false,
   ) {
     this.#_id = id;
     this.#name = name;

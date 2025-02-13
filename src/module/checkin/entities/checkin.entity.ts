@@ -2,6 +2,9 @@ import { CreateCheckinDto } from '../dto/create-checkin.dto';
 import { User } from '../../auth/users/user.entity';
 
 export class Checkin {
+  set user(value: User) {
+    this.#user = value;
+  }
   set contributesTo(value: string) {
     this.#contributesTo = value;
   }

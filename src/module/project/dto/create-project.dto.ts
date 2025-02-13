@@ -1,7 +1,7 @@
 import { TimeInterval } from '../../task/entities/time-restriction.entity';
 
 export enum GamificationStrategy {
-  BASIC = 'BASICA',
+  BASIC = 'SIN ADAPTACION',
   ELASTIC = 'ELASTICA',
 }
 

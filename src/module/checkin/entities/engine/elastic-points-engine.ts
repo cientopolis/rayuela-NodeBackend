@@ -5,12 +5,6 @@ import { Checkin } from '../checkin.entity';
 import { BasicPointsEngine } from './basic-points-engine';
 
 export class ElasticPointsEngine implements PointsEngine {
-  private readonly alpha: number;
-
-  constructor(alpha: number = 0.5) {
-    this.alpha = alpha;
-  }
-
   reward(ch: Checkin, game: Game): number {
     const user = ch.user;
     const users = game.users; // Lista de usuarios en el juego
@@ -39,7 +33,7 @@ export class ElasticPointsEngine implements PointsEngine {
     // Puntuación base
     const basePoints = new BasicPointsEngine().reward(ch, game);
 
-    return Math.round(basePoints * w);
+    return Math.ceil(basePoints * w);
   }
 
   assignableTo(project: Project): boolean {

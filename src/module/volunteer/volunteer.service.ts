@@ -15,7 +15,11 @@ export class VolunteerService {
   async subscribeToProject(user: UserJWT, projectId: string) {
     const dbUser: User = await this.userService.getByUserId(user.userId);
 
-    dbUser.addProject(projectId);
+    if (dbUser.gameProfiles.find((gp) => gp.projectId === projectId)) {
+      dbUser.removeProject(projectId);
+    } else {
+      dbUser.addProject(projectId);
+    }
     return this.userService.update(user.userId, dbUser);
   }
 
@@ -33,7 +37,9 @@ export class VolunteerService {
       return {
         ...p,
         subscribed: Boolean(
-          user?.gameProfiles?.find((gp) => gp.projectId === p._id.toString()),
+          user?.gameProfiles?.find(
+            (gp) => gp.projectId === p._id.toString() && gp.active,
+          ),
         ),
       };
     });

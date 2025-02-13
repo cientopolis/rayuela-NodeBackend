@@ -154,4 +154,13 @@ export class User {
   addContribution(taskId: string) {
     this.contributions.push(taskId);
   }
+
+  removeProject(projectId: string) {
+    this._gameProfiles = this.gameProfiles.map((gp) => {
+      if (gp.projectId === projectId) {
+        gp.active = false;
+      }
+      return gp;
+    });
+  }
 }
