@@ -15,10 +15,10 @@ export class VolunteerService {
   async subscribeToProject(user: UserJWT, projectId: string) {
     const dbUser: User = await this.userService.getByUserId(user.userId);
 
-    if (dbUser.gameProfiles.find((gp) => gp.projectId === projectId)) {
-      dbUser.removeProject(projectId);
+    if (dbUser.isSubscribedToProject(projectId)) {
+      dbUser.unsubscribeFromProject(projectId);
     } else {
-      dbUser.addProject(projectId);
+      dbUser.subscribeToProject(projectId);
     }
     return this.userService.update(user.userId, dbUser);
   }

@@ -84,6 +84,7 @@ describe('ElasticPointsEngine', () => {
 
       user2.addPointsFromProject(basePoints * 2, 'test');
       user3.addPointsFromProject(basePoints, 'test');
+
       mockGame.users = [user2, user3];
       mockCheckin.user = user3;
 

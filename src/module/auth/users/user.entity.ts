@@ -163,4 +163,37 @@ export class User {
       return gp;
     });
   }
+
+  isSubscribedToProject(projectId: string) {
+    return Boolean(
+      this.gameProfiles.find((gp) => gp.projectId === projectId && gp.active),
+    );
+  }
+
+  unsubscribeFromProject(projectId: string) {
+    this._gameProfiles = this.gameProfiles.map((gp) => {
+      return {
+        ...gp,
+        active: gp.projectId === projectId ? false : gp.active,
+      };
+    });
+  }
+
+  subscribeToProject(projectId: string) {
+    if (!this.isSubscribedToProject(projectId)) {
+      this._gameProfiles.push({
+        projectId: projectId,
+        points: 0,
+        badges: [],
+        active: true,
+      });
+    } else {
+      this._gameProfiles = this.gameProfiles.map((gp) => {
+        return {
+          ...gp,
+          active: gp.projectId === projectId ? true : gp.active,
+        };
+      });
+    }
+  }
 }

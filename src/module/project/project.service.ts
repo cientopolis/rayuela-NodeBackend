@@ -35,11 +35,11 @@ export class ProjectService {
     const project = await this.projectDao.findOne(id);
     if (userId) {
       const user = await this.userService.getByUserId(userId);
-      const gp = user.gameProfiles.find((gp) => gp.projectId === id);
+      const gp = user.getGameProfileFromProject(project.id);
       return {
         ...project,
         user: gp && {
-          isSubscribed: !!gp,
+          isSubscribed: user.isSubscribedToProject(project.id),
           badges: project.gamification.badgesRules.map((b) => ({
             ...b,
             active: gp.badges.includes(b.name),
