@@ -20,6 +20,9 @@ export class UserTemplate {
   @Prop({ required: true, unique: true })
   email: string; // Email único
 
+  @Prop({ default: '' })
+  resetToken: string; // reset token
+
   @Prop({ required: true })
   password: string; // Contraseña (hash)
 

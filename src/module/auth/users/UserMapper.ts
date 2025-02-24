@@ -27,6 +27,7 @@ export class UserMapper {
       profile_image: user.profileImage,
       verified: user.verified,
       role: user.role,
+      resetToken: user.resetToken,
       gameProfiles: user.gameProfiles,
       contributions: user.contributions,
     };

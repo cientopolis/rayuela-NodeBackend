@@ -5,6 +5,9 @@ import { UserService } from './users/user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from './users/user.entity';
 import { RegisterUserDTO } from './auth.controller';
+import { v4 as uuidv4 } from 'uuid';
+import * as nodemailer from 'nodemailer';
+import * as process from 'node:process';
 
 export interface UserJWT {
   userId: string;
@@ -14,10 +17,21 @@ export interface UserJWT {
 
 @Injectable()
 export class AuthService {
+  private transporter;
+
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) {
+    // Configura el transportador de nodemailer
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.NOREPLY_EMAIL,
+        pass: process.env.NOREPLY_PW,
+      },
+    });
+  }
 
   async validateUser(username: string, password: string): Promise<User> {
     const user = await this.usersService.findByEmailOrUsername('', username);
@@ -65,5 +79,34 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.usersService.findByEmailOrUsername(email, '');
+    if (!user) {
+      throw new BadRequestException('Email not found');
+    }
+
+    const resetToken = uuidv4();
+    await this.usersService.saveResetToken(user.id, resetToken);
+
+    const host =
+      process.env.NODE_ENV === 'production'
+        ? 'https://rayuela-frontend.vercel.app'
+        : 'http://localhost:5173';
+    const resetLink = `${host}/reset-password?token=${resetToken}`;
+    const mailOptions = {
+      from: 'noreply@rayuela.com', // Dirección de correo del remitente
+      to: email, // Dirección de correo del destinatario
+      subject: 'Contraseña olvidada', // Asunto del correo
+      text: `Parece que has olvidado tu contraseña! Puedes resetearla en este link ${resetLink} `,
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Correo enviado con éxito');
+    } catch (error) {
+      console.error('Error al enviar el correo:', error);
+    }
   }
 }

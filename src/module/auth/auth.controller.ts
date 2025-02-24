@@ -40,6 +40,21 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    const { email } = body;
+
+    if (!email) {
+      throw new BadRequestException('Email is required');
+    }
+
+    await this.authService.forgotPassword(email);
+    return {
+      message:
+        'If an account with that email exists, a reset link has been sent',
+    };
+  }
+
   @Post('register')
   async register(
     @Body()

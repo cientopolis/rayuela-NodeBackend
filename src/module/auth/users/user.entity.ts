@@ -8,6 +8,13 @@ export interface GameProfile {
 }
 
 export class User {
+  get resetToken(): string {
+    return this._resetToken;
+  }
+
+  set resetToken(value: string) {
+    this._resetToken = value;
+  }
   get contributions(): string[] {
     return this._contributions;
   }
@@ -34,6 +41,7 @@ export class User {
   private _id: string;
   private _gameProfiles: GameProfile[];
   private _contributions: string[];
+  private _resetToken: string;
 
   constructor(
     completeName: string,

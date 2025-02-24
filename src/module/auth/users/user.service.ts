@@ -28,4 +28,10 @@ export class UserService {
   async findAllByProjectId(projectId: string): Promise<User[]> {
     return await this.userDao.getAllByProjectId(projectId);
   }
+
+  async saveResetToken(id: string, resetToken: string) {
+    const u = await this.getByUserId(id);
+    u.resetToken = resetToken;
+    await this.userDao.update(id, u);
+  }
 }
