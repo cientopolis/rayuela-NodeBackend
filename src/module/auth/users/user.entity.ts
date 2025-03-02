@@ -1,4 +1,6 @@
 import { UserRole } from './user.schema';
+import { Checkin } from '../../checkin/entities/checkin.entity';
+import { Task } from '../../task/entities/task.entity';
 
 export interface GameProfile {
   projectId: string;
@@ -7,7 +9,21 @@ export interface GameProfile {
   active: boolean;
 }
 
+export interface UserRating {
+  score: number;
+  checkinId: string;
+  taskId: string;
+}
+
 export class User {
+  get ratings(): UserRating[] {
+    return this._ratings;
+  }
+
+  set ratings(value: UserRating[]) {
+    this._ratings = value;
+  }
+
   get resetToken(): string {
     return this._resetToken;
   }
@@ -15,8 +31,9 @@ export class User {
   set resetToken(value: string) {
     this._resetToken = value;
   }
-  get contributions(): string[] {
-    return this._contributions;
+
+  get checkinsWithTask(): string[] {
+    return this._checkinsWithTask;
   }
 
   get gameProfiles(): GameProfile[] {
@@ -40,8 +57,9 @@ export class User {
   private _role: UserRole;
   private _id: string;
   private _gameProfiles: GameProfile[];
-  private _contributions: string[];
+  private _checkinsWithTask: string[];
   private _resetToken: string;
+  private _ratings: UserRating[];
 
   constructor(
     completeName: string,
@@ -54,6 +72,7 @@ export class User {
     id?: string,
     gameProfiles: GameProfile[] = [],
     contributions: string[] = [],
+    ratings: UserRating[] = [],
   ) {
     this._completeName = completeName;
     this._username = username;
@@ -64,7 +83,8 @@ export class User {
     this._role = role;
     this._id = id;
     this._gameProfiles = gameProfiles;
-    this._contributions = contributions;
+    this._checkinsWithTask = contributions;
+    this._ratings = ratings;
   }
 
   // Getters
@@ -160,7 +180,7 @@ export class User {
   }
 
   addContribution(taskId: string) {
-    this.contributions.push(taskId);
+    this.checkinsWithTask.push(taskId);
   }
 
   removeProject(projectId: string) {
@@ -185,6 +205,18 @@ export class User {
         active: gp.projectId === projectId ? false : gp.active,
       };
     });
+  }
+
+  addRating(checkin: Checkin, score: number) {
+    this.ratings.push({
+      checkinId: checkin.id,
+      taskId: checkin.contributesTo,
+      score,
+    });
+  }
+
+  getRatingForTaskId(taskId: string) {
+    return this.ratings.find((r) => r.taskId === taskId)?.score;
   }
 
   subscribeToProject(projectId: string) {

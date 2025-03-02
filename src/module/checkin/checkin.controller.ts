@@ -35,6 +35,16 @@ export class CheckinController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('/rate')
+  async rate(
+    @Body() rateBody: { checkinId: string; rate: number },
+    @Req() req,
+  ) {
+    const userId = req.user.userId;
+    return this.checkinService.rate({ ...rateBody, userId });
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('user/:projectId')
   async findUserCheckins(@Req() req, @Param('projectId') projectId: string) {
     const userId = req.user.userId;

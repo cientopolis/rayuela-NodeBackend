@@ -20,6 +20,9 @@ export class CheckInTemplate {
   @Prop({ ref: 'User', required: true })
   userId: string;
 
+  @Prop({ required: true })
+  taskType: string;
+
   @Prop({ type: String })
   contributesTo: string;
 
@@ -30,6 +33,7 @@ export class CheckInTemplate {
     projectId: string,
     userId: string,
     contributesTo: string,
+    taskType: string,
   ) {
     this.latitude = latitude;
     this.longitude = longitude;
@@ -37,6 +41,7 @@ export class CheckInTemplate {
     this.projectId = projectId;
     this.userId = userId;
     this.contributesTo = contributesTo;
+    this.taskType = taskType;
   }
 
   static collectionName() {

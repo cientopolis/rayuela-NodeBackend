@@ -8,9 +8,6 @@ import { Checkin } from './entities/checkin.entity';
 import { UserService } from '../auth/users/user.service';
 import { Move } from './entities/move.entity';
 import { GameBuilder } from './entities/game.entity';
-import { BasicPointsEngine } from './entities/engine/basic-points-engine';
-import { BasicBadgeEngine } from './entities/engine/basic-badge-engine';
-import { BasicLeaderbardEngine } from './entities/engine/basic-leaderboard-engine';
 import { ProjectService, UserStatus } from '../project/project.service';
 import { MoveDao } from './persistence/move.dao';
 import { GamificationService } from '../gamification/gamification.service';
@@ -62,6 +59,7 @@ export class CheckinService {
     await this.gamificationService.saveMove(move);
 
     return {
+      id: move.checkin.id,
       ...move,
       contributesTo: contribution && {
         name: contribution.name,
@@ -115,5 +113,10 @@ export class CheckinService {
       createCheckinDto.projectId,
     );
     return { tasks, user, users, checkin, project };
+  }
+
+  async rate(params: { checkinId: string; rate: number; userId: string }) {
+    const ch = await this.findOne(params.checkinId);
+    return this.userService.rate(params.userId, ch, params.rate);
   }
 }

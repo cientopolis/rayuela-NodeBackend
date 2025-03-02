@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDao } from './user.dao';
 import { User } from './user.entity';
+import { Checkin } from '../../checkin/entities/checkin.entity';
 
 @Injectable()
 export class UserService {
@@ -33,5 +34,15 @@ export class UserService {
     const u = await this.getByUserId(id);
     u.resetToken = resetToken;
     await this.userDao.update(id, u);
+  }
+
+  async rate(userId: string, checkin: Checkin, rate: number) {
+    const u = await this.getByUserId(userId);
+    if (!u) {
+      throw new Error('User not found');
+    }
+    u.addRating(checkin, rate);
+    await this.update(u.id, u);
+    return u;
   }
 }

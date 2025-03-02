@@ -10,7 +10,6 @@ export enum ScoreRate {
   FIVE_STAR = 5,
 }
 
-// Constructor deberia recibir nuevos puntos, y nuevas insignias
 export class Move {
   get gameStatus(): GameStatus {
     return this._gameStatus;

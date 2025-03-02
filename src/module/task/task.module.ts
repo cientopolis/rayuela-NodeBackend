@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { TaskDao } from './persistence/task.dao';
 import { TaskSchema, TaskSchemaTemplate } from './persistence/task.schema';
-import { ProjectService } from '../project/project.service';
 import { ProjectModule } from '../project/project.module';
 import { LeaderboardModule } from '../leaderboard/leaderboard.module';
 
@@ -19,7 +18,7 @@ import { LeaderboardModule } from '../leaderboard/leaderboard.module';
     LeaderboardModule,
   ],
   controllers: [TaskController],
-  providers: [TaskService, TaskDao, ProjectService],
+  providers: [TaskService, TaskDao],
   exports: [TaskService],
 })
 export class TaskModule {}

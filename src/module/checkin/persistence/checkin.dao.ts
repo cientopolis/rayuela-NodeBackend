@@ -4,24 +4,28 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CheckInTemplate, CheckInDocument } from './checkin.schema';
 import { UpdateCheckinDto } from '../dto/update-checkin.dto';
 import { Checkin } from '../entities/checkin.entity';
+import { CheckinMapper } from './CheckinMapper';
+import { UserService } from '../../auth/users/user.service';
 
 @Injectable()
 export class CheckInDao {
   constructor(
     @InjectModel(CheckInTemplate.collectionName())
     private readonly checkInModel: Model<CheckInDocument>,
+    //private userService: UserService,
   ) {}
 
   async findAll(): Promise<CheckInTemplate[]> {
     return this.checkInModel.find().exec();
   }
 
-  async findOne(id: string): Promise<CheckInTemplate> {
+  async findOne(id: string): Promise<Checkin> {
     const checkIn = await this.checkInModel.findById(id).exec();
     if (!checkIn) {
       throw new NotFoundException('Check-in not found');
     }
-    return checkIn;
+    //const user = await this.userService.getByUserId(checkIn.userId);
+    return CheckinMapper.toEntity(checkIn, null);
   }
 
   async create(checkin: Checkin): Promise<CheckInTemplate> {
@@ -58,6 +62,7 @@ export class CheckInDao {
       checkin.projectId,
       checkin.user.id,
       checkin.contributesTo,
+      checkin.taskType,
     );
   }
 

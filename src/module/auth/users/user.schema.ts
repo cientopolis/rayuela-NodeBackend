@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { GameProfile } from './user.entity';
 
 export type UserDocument = UserTemplate & Document;
@@ -9,10 +8,27 @@ export enum UserRole {
   Volunteer = 'Volunteer',
 }
 
+export class Rating {
+  @Prop({
+    required: true,
+  })
+  checkinId: string;
+
+  @Prop({
+    required: true,
+  })
+  taskId: string;
+
+  @Prop({ required: true })
+  score: number;
+}
+
 @Schema()
 export class UserTemplate {
   @Prop({ required: true })
   complete_name: string; // Nombre completo del usuario
+
+  _id?: string; // Nombre completo del usuario
 
   @Prop({ required: true, unique: true })
   username: string; // Nombre de usuario único
@@ -40,6 +56,9 @@ export class UserTemplate {
 
   @Prop({ type: Array, default: [] })
   contributions: string[]; // tasks id
+
+  @Prop({ type: [{ type: Object }], default: [] })
+  ratings: Rating[];
 
   static collectionName() {
     return 'Users';
