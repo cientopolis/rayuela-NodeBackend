@@ -1,6 +1,5 @@
 import { UserRole } from './user.schema';
 import { Checkin } from '../../checkin/entities/checkin.entity';
-import { Task } from '../../task/entities/task.entity';
 
 export interface GameProfile {
   projectId: string;
@@ -16,6 +15,14 @@ export interface UserRating {
 }
 
 export class User {
+  get checkins(): Checkin[] {
+    return this._checkins;
+  }
+
+  set checkins(value: Checkin[]) {
+    this._checkins = value;
+  }
+
   get ratings(): UserRating[] {
     return this._ratings;
   }
@@ -32,8 +39,8 @@ export class User {
     this._resetToken = value;
   }
 
-  get checkinsWithTask(): string[] {
-    return this._checkinsWithTask;
+  get contributions(): string[] {
+    return this._contributions;
   }
 
   get gameProfiles(): GameProfile[] {
@@ -57,9 +64,10 @@ export class User {
   private _role: UserRole;
   private _id: string;
   private _gameProfiles: GameProfile[];
-  private _checkinsWithTask: string[];
+  private _contributions: string[];
   private _resetToken: string;
   private _ratings: UserRating[];
+  private _checkins: Checkin[];
 
   constructor(
     completeName: string,
@@ -73,6 +81,7 @@ export class User {
     gameProfiles: GameProfile[] = [],
     contributions: string[] = [],
     ratings: UserRating[] = [],
+    checkins: Checkin[] = [],
   ) {
     this._completeName = completeName;
     this._username = username;
@@ -83,8 +92,9 @@ export class User {
     this._role = role;
     this._id = id;
     this._gameProfiles = gameProfiles;
-    this._checkinsWithTask = contributions;
+    this._contributions = contributions;
     this._ratings = ratings;
+    this._checkins = checkins;
   }
 
   // Getters
@@ -180,7 +190,7 @@ export class User {
   }
 
   addContribution(taskId: string) {
-    this.checkinsWithTask.push(taskId);
+    this.contributions.push(taskId);
   }
 
   removeProject(projectId: string) {

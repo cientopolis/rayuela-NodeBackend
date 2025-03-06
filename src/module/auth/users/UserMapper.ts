@@ -30,7 +30,7 @@ export class UserMapper {
       role: user.role,
       resetToken: user.resetToken,
       gameProfiles: user.gameProfiles,
-      contributions: user.checkinsWithTask,
+      contributions: user.contributions,
       ratings: user.ratings.map((r) => ({
         score: r.score,
         checkinId: r.checkinId,

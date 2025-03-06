@@ -10,10 +10,10 @@ export class ElasticPointsEngine implements PointsEngine {
     const users = game.users; // Lista de usuarios en el juego
 
     const totalContributions = users.reduce(
-      (sum, u) => sum + (u.checkinsWithTask.length || 0),
+      (sum, u) => sum + (u.contributions.length || 0),
       0,
     );
-    const userContributions = user.checkinsWithTask.length || 0;
+    const userContributions = user.contributions.length || 0;
 
     const maxPoints = Math.max(
       ...users.map((u) => u.getGameProfileFromProject(game.project.id).points),

@@ -1,10 +1,20 @@
 import { CreateCheckinDto } from '../dto/create-checkin.dto';
 import { User } from '../../auth/users/user.entity';
+import { Task } from '../../task/entities/task.entity';
 
 export class Checkin {
+  get relatedTask(): Task {
+    return this._relatedTask;
+  }
+
+  set relatedTask(value: Task) {
+    this._relatedTask = value;
+  }
+
   set user(value: User) {
     this.#user = value;
   }
+
   set contributesTo(value: string) {
     this.#contributesTo = value;
   }
@@ -61,6 +71,7 @@ export class Checkin {
   #contributesTo: string;
   #taskType: string;
   #id: string;
+  private _relatedTask: Task;
 
   constructor(
     latitude: string,
@@ -70,6 +81,7 @@ export class Checkin {
     user: User,
     taskType: string,
     id: string,
+    relatedTask?: Task,
   ) {
     this.#latitude = latitude;
     this.#longitude = longitude;
@@ -77,6 +89,7 @@ export class Checkin {
     this.#projectId = projectId;
     this.#user = user;
     this.#taskType = taskType;
+    this._relatedTask = relatedTask;
     this.#contributesTo = '';
     this.#id = id;
   }
