@@ -30,6 +30,27 @@ export class UserService {
     return await this.userDao.getUserById(userId);
   }
 
+  addRefreshSession(userId: string, hash: string, expiry: Date, max: number) {
+    return this.userDao.addRefreshSession(userId, hash, expiry, max);
+  }
+
+  touchRefreshSession(
+    userId: string,
+    hash: string,
+    expiry: Date,
+    max: number,
+  ): Promise<boolean> {
+    return this.userDao.touchRefreshSession(userId, hash, expiry, max);
+  }
+
+  removeRefreshSession(userId: string, hash: string) {
+    return this.userDao.removeRefreshSession(userId, hash);
+  }
+
+  clearRefreshSessions(userId: string) {
+    return this.userDao.clearRefreshSessions(userId);
+  }
+
   async findAllByProjectId(projectId: string): Promise<User[]> {
     return await this.userDao.getAllByProjectId(projectId);
   }
