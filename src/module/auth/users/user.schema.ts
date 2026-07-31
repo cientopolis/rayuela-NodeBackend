@@ -55,7 +55,10 @@ export class UserTemplate {
   createdAt: Date;
 
   @Prop({ default: null })
-  profile_image: string; // Imagen de perfil (puede ser una URL)
+  profile_image: string; // Imagen de perfil (URL, o un id de avatar `avatar:<id>`)
+
+  @Prop({ default: '' })
+  description: string; // Bio corta que el usuario edita desde su perfil
 
   @Prop({ default: false })
   verified: boolean; // Indica si el usuario ha verificado su cuenta
