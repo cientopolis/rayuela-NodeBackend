@@ -1,4 +1,10 @@
-import { Gamification, BadgeRule, PointRule } from './gamification.entity';
+import {
+  Gamification,
+  BadgeRule,
+  PointRule,
+  effectiveBadgeStatus,
+  isBadgeAwardable,
+} from './gamification.entity';
 
 describe('Gamification Entities', () => {
   describe('Gamification', () => {
@@ -25,6 +31,63 @@ describe('Gamification Entities', () => {
       );
       expect(b._id).toBe('id');
       expect(b.name).toBe('name');
+    });
+  });
+
+  describe('fading window', () => {
+    const now = new Date('2026-06-15T12:00:00.000Z');
+    const future = new Date('2026-06-20T12:00:00.000Z');
+    const past = new Date('2026-06-10T12:00:00.000Z');
+
+    it('reads a fading badge as faded while the window is open', () => {
+      const badge = { status: 'faded', expiresAt: future };
+      expect(effectiveBadgeStatus(badge, now)).toBe('faded');
+      // Still earnable — the limited availability IS the time pressure.
+      expect(isBadgeAwardable(badge, now)).toBe(true);
+    });
+
+    it('reads a fading badge as expired once the window closed', () => {
+      const badge = { status: 'faded', expiresAt: past };
+      expect(effectiveBadgeStatus(badge, now)).toBe('expired');
+      expect(isBadgeAwardable(badge, now)).toBe(false);
+    });
+
+    it('expires exactly at the boundary, not a tick later', () => {
+      const badge = { status: 'faded', expiresAt: now };
+      expect(effectiveBadgeStatus(badge, now)).toBe('expired');
+    });
+
+    it('accepts an ISO string as well as a Date (JSON round-trips)', () => {
+      expect(
+        effectiveBadgeStatus(
+          { status: 'faded', expiresAt: future.toISOString() },
+          now,
+        ),
+      ).toBe('faded');
+    });
+
+    it('keeps a fading badge open when it has no usable window', () => {
+      expect(effectiveBadgeStatus({ status: 'faded' }, now)).toBe('faded');
+      expect(
+        effectiveBadgeStatus({ status: 'faded', expiresAt: 'not-a-date' }, now),
+      ).toBe('faded');
+    });
+
+    it('never resurrects an expired badge, whatever the dates say', () => {
+      const badge = { status: 'expired', expiresAt: future };
+      expect(effectiveBadgeStatus(badge, now)).toBe('expired');
+      expect(isBadgeAwardable(badge, now)).toBe(false);
+    });
+
+    it('ignores a window on an active badge', () => {
+      expect(
+        effectiveBadgeStatus({ status: 'active', expiresAt: past }, now),
+      ).toBe('active');
+    });
+
+    it('treats missing or unknown statuses as active', () => {
+      expect(effectiveBadgeStatus({}, now)).toBe('active');
+      expect(effectiveBadgeStatus({ status: 'pizza' }, now)).toBe('active');
     });
   });
 

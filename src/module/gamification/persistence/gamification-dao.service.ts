@@ -14,6 +14,7 @@ import {
 import { CreateBadgeRuleDTO } from '../dto/create-badge-rule-d-t.o';
 import {
   BadgeRule,
+  BadgeStatus,
   Gamification,
   PointRule,
 } from '../entities/gamification.entity';
@@ -110,18 +111,65 @@ export class GamificationDao {
       .exec();
   }
 
+  /**
+   * Moves a badge rule through the fading lifecycle, keeping the window
+   * fields consistent with the status so `effectiveBadgeStatus` never has
+   * to reconcile a contradictory row:
+   *
+   *   → faded   opens the window (`fadedSince` now, `expiresAt` as given).
+   *   → expired closes it immediately, back-dating `expiresAt` so the
+   *             derived status agrees with the stored one.
+   *   → active  is the manual restitution: the whole fade record is dropped.
+   */
   async updateBadgeStatus(
     projectId: string,
     badgeId: string,
-    status: string,
+    status: BadgeStatus,
+    window: { expiresAt?: Date; fadeReason?: string } = {},
   ): Promise<GamificationTemplate | null> {
-    return this.gamificationModel
-      .findOneAndUpdate(
-        { projectId, 'badges._id': badgeId },
-        { $set: { 'badges.$.status': status } },
-        { new: true },
-      )
+    const now = new Date();
+    const set: Record<string, unknown> = { 'badges.$.status': status };
+    const unset: Record<string, ''> = {};
+
+    if (status === BadgeStatus.Faded) {
+      set['badges.$.fadedSince'] = now;
+      if (window.expiresAt) {
+        set['badges.$.expiresAt'] = window.expiresAt;
+      } else {
+        unset['badges.$.expiresAt'] = '';
+      }
+      if (window.fadeReason) {
+        set['badges.$.fadeReason'] = window.fadeReason;
+      } else {
+        unset['badges.$.fadeReason'] = '';
+      }
+    } else if (status === BadgeStatus.Expired) {
+      set['badges.$.expiresAt'] = now;
+      if (window.fadeReason) {
+        set['badges.$.fadeReason'] = window.fadeReason;
+      }
+    } else {
+      unset['badges.$.fadedSince'] = '';
+      unset['badges.$.expiresAt'] = '';
+      unset['badges.$.fadeReason'] = '';
+    }
+
+    // Mongo rejects an empty `$unset`, so only attach it when it has keys.
+    const update: Record<string, unknown> = { $set: set };
+    if (Object.keys(unset).length > 0) {
+      update.$unset = unset;
+    }
+
+    const updated = await this.gamificationModel
+      .findOneAndUpdate({ projectId, 'badges._id': badgeId }, update, {
+        new: true,
+      })
       .exec();
+
+    if (!updated) {
+      throw new NotFoundException('Insignia no encontrada');
+    }
+    return updated;
   }
 
   async addScoreRule(
@@ -198,6 +246,9 @@ export class GamificationDao {
             b.areaId,
             b.timeIntervalId,
             b.status || 'active',
+            b.fadedSince,
+            b.expiresAt,
+            b.fadeReason,
           ),
       ),
       (saved?.pointRules || []).map(
@@ -274,5 +325,3 @@ export class GamificationDao {
     );
   }
 }
-
-

@@ -56,7 +56,7 @@ describe('BasicBadgeEngine', () => {
       expect(result).toContain(rule);
     });
 
-    it('should bypass faded prerequisite badges and award active child badge', () => {
+    it('should bypass expired prerequisite badges and award active child badge', () => {
       const ruleA = new BadgeRule(
         'rA',
         'p1',
@@ -70,6 +70,8 @@ describe('BasicBadgeEngine', () => {
         'A1',
         'Cualquiera',
         'faded',
+        undefined,
+        new Date(Date.now() - 60_000), // window already closed
       );
       const ruleB = new BadgeRule(
         'rB',
@@ -150,6 +152,103 @@ describe('BasicBadgeEngine', () => {
       const result = engine.newBadgesFor(user, checkin2, project);
       expect(result).toContain(ruleB);
       expect(result).not.toContain(ruleA);
+    });
+
+    it('keeps an already-earned badge counting as a prerequisite after the rule changes',
+        () => {
+      // The user earned "BadgeA" back when it needed 1 check-in; an admin has
+      // since raised the bar to 99. They keep the badge, so the chain below it
+      // must stay reachable.
+      const ruleA = new BadgeRule(
+        'rA', 'p1', 'BadgeA', 'd', 'i', 99, false, [],
+        'Cualquiera', 'Cualquiera', 'Cualquiera',
+      );
+      const ruleB = new BadgeRule(
+        'rB', 'p1', 'BadgeB', 'd', 'i', 1, false, ['BadgeA'],
+        'Cualquiera', 'Cualquiera', 'Cualquiera',
+      );
+      const proj = {
+        id: 'p1',
+        gamification: { badgesRules: [ruleA, ruleB] },
+        taskTypes: ['type1'],
+        timeIntervals: [],
+        areas: { features: [] },
+      } as any;
+      const ch = {
+        date: new Date(),
+        taskType: 'type1',
+        longitude: '0',
+        latitude: '0',
+      } as any;
+
+      expect(
+        engine.isBadgeSatisfied(ruleB, [ch], proj, [], new Map()),
+      ).toBe(false);
+      expect(
+        engine.isBadgeSatisfied(ruleB, [ch], proj, ['BadgeA'], new Map()),
+      ).toBe(true);
+    });
+
+    describe('fading window', () => {
+      // Minimal project + user that satisfy any 'Cualquiera' rule with one check-in.
+      const buildCase = (rule: BadgeRule) => {
+        const project = {
+          id: 'p1',
+          gamification: { badgesRules: [rule] },
+          taskTypes: ['type1'],
+          timeIntervals: [],
+          areas: { features: [] },
+        } as any;
+        const user = new User('t@t.com', 'u', 'p', 'T');
+        user.id = 'u1';
+        user.addProject('p1');
+        const checkin = {
+          date: new Date(),
+          taskType: 'type1',
+          longitude: '0',
+          latitude: '0',
+          contributesTo: '',
+          projectId: 'p1',
+        } as any;
+        return { project, user, checkin };
+      };
+
+      const fadingRule = (expiresAt?: Date) =>
+        new BadgeRule(
+          'r1',
+          'p1',
+          'Badge1',
+          'desc',
+          'img',
+          1,
+          false,
+          [],
+          'Cualquiera',
+          'Cualquiera',
+          'Cualquiera',
+          'faded',
+          new Date(),
+          expiresAt,
+        );
+
+      it('still awards a fading badge while the window is open', () => {
+        const rule = fadingRule(new Date(Date.now() + 3 * 86_400_000));
+        const { project, user, checkin } = buildCase(rule);
+        expect(engine.newBadgesFor(user, checkin, project)).toContain(rule);
+      });
+
+      it('stops awarding it once the window closed', () => {
+        const rule = fadingRule(new Date(Date.now() - 1_000));
+        const { project, user, checkin } = buildCase(rule);
+        expect(engine.newBadgesFor(user, checkin, project)).not.toContain(rule);
+      });
+
+      it('never awards an expired badge', () => {
+        const rule = fadingRule(new Date(Date.now() + 86_400_000));
+        rule.status = 'expired';
+        const { project, user, checkin } = buildCase(rule);
+        expect(engine.newBadgesFor(user, checkin, project)).not.toContain(rule);
+      });
     });
   });
 

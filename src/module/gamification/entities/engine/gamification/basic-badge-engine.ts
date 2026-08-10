@@ -2,7 +2,7 @@ import { BadgeEngine } from '../../../../checkin/entities/game.entity';
 import { User } from '../../../../auth/users/user.entity';
 import { Checkin } from '../../../../checkin/entities/checkin.entity';
 import { Project } from '../../../../project/entities/project';
-import { BadgeRule } from '../../gamification.entity';
+import { BadgeRule, isBadgeAwardable } from '../../gamification.entity';
 import { BadRequestException } from '@nestjs/common';
 import { TimeInterval } from '../../../../task/entities/time-restriction.entity';
 import { GeoUtils } from '../../../../task/utils/geoUtils';
@@ -22,8 +22,12 @@ export class BasicBadgeEngine implements BadgeEngine {
       this.isBadgeSatisfied(badge, allCheckins, project, currentBadges, memo),
     );
 
-    const earnableBadges = satisfiedBadges.filter(
-      (badge) => badge.status === 'active',
+    // One clock for the whole pass so a badge can't expire halfway through it.
+    // `faded` rules stay earnable until their window closes — that limited
+    // availability is the point of the strategy, not a leftover state.
+    const now = new Date();
+    const earnableBadges = satisfiedBadges.filter((badge) =>
+      isBadgeAwardable(badge, now),
     );
 
     return earnableBadges.filter(
@@ -46,6 +50,17 @@ export class BasicBadgeEngine implements BadgeEngine {
   ): boolean {
     if (memo.has(badge.name)) {
       return memo.get(badge.name)!;
+    }
+
+    // Holding the badge settles the question. Everything below re-derives
+    // satisfaction from raw check-ins, which silently stops matching when the
+    // rule is edited (a higher `checkinsAmount`, a renamed area, a task type
+    // dropped from the project) or when the rule expires. Without this, a
+    // badge someone already earned stops counting as a prerequisite and the
+    // whole chain below it becomes unreachable *for the people furthest along*.
+    if (currentBadges.includes(badge.name)) {
+      memo.set(badge.name, true);
+      return true;
     }
 
     // 1. Evaluate prerequisite badges recursively (DAG evaluation)
