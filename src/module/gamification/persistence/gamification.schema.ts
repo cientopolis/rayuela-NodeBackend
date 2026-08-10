@@ -42,6 +42,18 @@ export class BadgeTemplate {
     enum: ['active', 'faded', 'expired'],
   })
   status?: string;
+
+  // Fading window. `expiresAt` is the only field the lifecycle reads: past
+  // it, `effectiveBadgeStatus` reports `expired` with nothing else to run.
+  // The other two are for the awareness copy and the audit trail.
+  @Prop({ type: Date })
+  fadedSince?: Date;
+
+  @Prop({ type: Date })
+  expiresAt?: Date;
+
+  @Prop()
+  fadeReason?: string;
 }
 
 const BadgeTemplateSchema = SchemaFactory.createForClass(BadgeTemplate);

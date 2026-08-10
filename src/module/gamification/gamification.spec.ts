@@ -17,6 +17,7 @@ const mockGamificationDao = {
   addScoreRule: jest.fn(),
   updatePointRule: jest.fn(),
   deletePointRule: jest.fn(),
+  updateBadgeStatus: jest.fn(),
   saveMove: jest.fn(),
 };
 
@@ -117,6 +118,56 @@ describe('GamificationService', () => {
         badgeId,
         dto,
       );
+    });
+  });
+
+  describe('updateBadgeStatus', () => {
+    beforeEach(() => {
+      mockGamificationDao.updateBadgeStatus.mockResolvedValue({});
+    });
+
+    it('should pass a future window through when fading', async () => {
+      const expiresAt = new Date(Date.now() + 7 * 86_400_000);
+      await service.updateBadgeStatus('p1', 'b1', 'faded', {
+        expiresAt: expiresAt.toISOString(),
+        fadeReason: '  poca actividad  ',
+      });
+      expect(mockGamificationDao.updateBadgeStatus).toHaveBeenCalledWith(
+        'p1',
+        'b1',
+        'faded',
+        { expiresAt, fadeReason: 'poca actividad' },
+      );
+    });
+
+    it('should reject fading without a window', async () => {
+      await expect(
+        service.updateBadgeStatus('p1', 'b1', 'faded', {}),
+      ).rejects.toThrow('expiresAt');
+      expect(mockGamificationDao.updateBadgeStatus).not.toHaveBeenCalled();
+    });
+
+    it('should reject a window that is already closed', async () => {
+      await expect(
+        service.updateBadgeStatus('p1', 'b1', 'faded', {
+          expiresAt: new Date(Date.now() - 1_000).toISOString(),
+        }),
+      ).rejects.toThrow('futura');
+      expect(mockGamificationDao.updateBadgeStatus).not.toHaveBeenCalled();
+    });
+
+    it('should reject an unparseable window', async () => {
+      await expect(
+        service.updateBadgeStatus('p1', 'b1', 'faded', {
+          expiresAt: 'mañana',
+        }),
+      ).rejects.toThrow('válida');
+    });
+
+    it('should not require a window when restoring or expiring', async () => {
+      await service.updateBadgeStatus('p1', 'b1', 'active', {});
+      await service.updateBadgeStatus('p1', 'b1', 'expired', {});
+      expect(mockGamificationDao.updateBadgeStatus).toHaveBeenCalledTimes(2);
     });
   });
 

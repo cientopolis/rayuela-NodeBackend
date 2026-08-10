@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GamificationService } from './gamification.service';
@@ -15,6 +16,8 @@ import { UpdateGamificationDto } from './dto/update-gamification.dto';
 import { UpdateBadgeRuleDTO } from './dto/update-badge-rule-d-t.o';
 import { CreateScoreRuleDto } from './dto/create-score-rule-dto';
 import { UpdateScoreRuleDto } from './dto/update-score-rule.dto';
+import { UpdateBadgeStatusDto } from './dto/update-badge-status.dto';
+import { BadgeStatus } from './entities/gamification.entity';
 
 @Controller('gamification')
 export class GamificationController {
@@ -38,14 +41,29 @@ export class GamificationController {
     return this.gamificationService.removeBadge(projectId, id);
   }
 
+  /**
+   * Drives a badge through the fading lifecycle. The body is only read when
+   * moving to `faded`, where `expiresAt` sets the countdown window.
+   *
+   * `ParseEnumPipe` is what keeps an arbitrary path segment out of the
+   * document: Mongoose does not run the schema `enum` on `findOneAndUpdate`
+   * unless `runValidators` is on, so without this a bogus status would be
+   * stored and then rendered as a plain active badge by every client.
+   */
   @Patch('/:projectId/badge/:id/status/:status')
   @UseGuards(AuthGuard('jwt'))
   updateBadgeStatus(
     @Param('projectId') projectId: string,
     @Param('id') id: string,
-    @Param('status') status: string,
+    @Param('status', new ParseEnumPipe(BadgeStatus)) status: BadgeStatus,
+    @Body() body: UpdateBadgeStatusDto,
   ) {
-    return this.gamificationService.updateBadgeStatus(projectId, id, status);
+    return this.gamificationService.updateBadgeStatus(
+      projectId,
+      id,
+      status,
+      body,
+    );
   }
 
   @Post('score-rule')

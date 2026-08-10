@@ -6,7 +6,10 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { UserService } from '../auth/users/user.service';
 import { Project } from './entities/project';
 import { getTaskTypeName } from './entities/task-type';
-import { BadgeRule } from '../gamification/entities/gamification.entity';
+import {
+  BadgeRule,
+  effectiveBadgeStatus,
+} from '../gamification/entities/gamification.entity';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { Leaderboard } from '../leaderboard/persistence/leaderboard-user-schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -44,6 +47,14 @@ export class ProjectService {
     userId?: string,
   ): Promise<Project & { user?: UserStatus }> {
     const project = await this.projectDao.findOne(id);
+    const now = new Date();
+
+    // Resolve the fading window once, server-side, so no client has to
+    // re-derive `faded` vs `expired` against its own clock — mobile caches
+    // this payload and reads it back offline, where "now" is anyone's guess.
+    // `expiresAt` still ships raw so the countdown stays live.
+    const resolved = this.withEffectiveBadgeStatus(project, now);
+
     if (userId) {
       const user = await this.userService.getByUserId(userId);
       const gp = user.getGameProfileFromProject(project.id);
@@ -57,10 +68,10 @@ export class ProjectService {
       const memo = new Map<string, boolean>();
 
       return {
-        ...project,
+        ...resolved,
         user: gp && {
           isSubscribed: user.isSubscribedToProject(project.id),
-          badges: project.gamification.badgesRules.map((b) => ({
+          badges: resolved.gamification.badgesRules.map((b) => ({
             ...b,
             active: gp.badges.includes(b.name),
             satisfied: badgeEngine.isBadgeSatisfied(
@@ -78,7 +89,21 @@ export class ProjectService {
         },
       };
     }
-    return project;
+    return resolved;
+  }
+
+  /** Copy of the project whose badge rules report their status as of [now]. */
+  private withEffectiveBadgeStatus(project: Project, now: Date): Project {
+    return {
+      ...project,
+      gamification: {
+        ...project.gamification,
+        badgesRules: project.gamification.badgesRules.map((b) => ({
+          ...b,
+          status: effectiveBadgeStatus(b, now),
+        })),
+      },
+    };
   }
 
   async create(createProjectDto: CreateProjectDto): Promise<ProjectTemplate> {

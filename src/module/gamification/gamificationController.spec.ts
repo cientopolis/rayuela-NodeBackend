@@ -53,11 +53,23 @@ describe('GamificationController', () => {
     });
 
     it('should update badge status', async () => {
-      await controller.updateBadgeStatus('p1', 'b1', 'active');
+      await controller.updateBadgeStatus('p1', 'b1', 'active', {});
       expect(service.updateBadgeStatus).toHaveBeenCalledWith(
         'p1',
         'b1',
         'active',
+        {},
+      );
+    });
+
+    it('should forward the fading window body', async () => {
+      const body = { expiresAt: '2030-01-01T00:00:00.000Z', fadeReason: 'why' };
+      await controller.updateBadgeStatus('p1', 'b1', 'faded', body);
+      expect(service.updateBadgeStatus).toHaveBeenCalledWith(
+        'p1',
+        'b1',
+        'faded',
+        body,
       );
     });
   });

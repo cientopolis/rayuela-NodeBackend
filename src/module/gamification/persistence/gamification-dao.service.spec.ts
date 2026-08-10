@@ -140,6 +140,54 @@ describe('GamificationDao', () => {
     expect(model.findOneAndUpdate).toHaveBeenCalled();
   });
 
+  describe('updateBadgeStatus', () => {
+    const update = () => model.findOneAndUpdate.mock.calls.at(-1)[1];
+
+    beforeEach(() => {
+      model.findOneAndUpdate.mockClear().mockReturnThis();
+      model.exec.mockResolvedValue({});
+    });
+
+    it('should open the window when fading', async () => {
+      const expiresAt = new Date('2030-01-01T00:00:00.000Z');
+      await dao.updateBadgeStatus('p1', 'b1', 'faded', {
+        expiresAt,
+        fadeReason: 'poca actividad',
+      });
+      expect(update().$set).toMatchObject({
+        'badges.$.status': 'faded',
+        'badges.$.expiresAt': expiresAt,
+        'badges.$.fadeReason': 'poca actividad',
+      });
+      expect(update().$set['badges.$.fadedSince']).toBeInstanceOf(Date);
+      expect(update().$unset).toBeUndefined();
+    });
+
+    it('should back-date the window when expiring by hand', async () => {
+      await dao.updateBadgeStatus('p1', 'b1', 'expired');
+      expect(update().$set['badges.$.status']).toBe('expired');
+      // Without this the stored status and the derived one would disagree.
+      expect(update().$set['badges.$.expiresAt']).toBeInstanceOf(Date);
+    });
+
+    it('should wipe the fade record when restoring to active', async () => {
+      await dao.updateBadgeStatus('p1', 'b1', 'active');
+      expect(update().$set).toEqual({ 'badges.$.status': 'active' });
+      expect(update().$unset).toEqual({
+        'badges.$.fadedSince': '',
+        'badges.$.expiresAt': '',
+        'badges.$.fadeReason': '',
+      });
+    });
+
+    it('should throw when the badge does not exist', async () => {
+      model.exec.mockResolvedValue(null);
+      await expect(
+        dao.updateBadgeStatus('p1', 'nope', 'active'),
+      ).rejects.toThrow('Insignia no encontrada');
+    });
+  });
+
   it('should get gamification by project id', async () => {
     const saved = {
       badges: [
