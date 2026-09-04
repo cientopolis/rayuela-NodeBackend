@@ -4,6 +4,15 @@ import { TaskTypeValue } from '../entities/task-type';
 export enum GamificationStrategy {
   BASIC = 'SIN ADAPTACION',
   ELASTIC = 'ELASTICA',
+  /**
+   * Community badge fading. Points and badges are awarded exactly as under
+   * [BASIC] — the adaptation acts on the badge *set* over time, not on how a
+   * single check-in is scored.
+   *
+   * Picking it is what enables the admin panel; the lifecycle machinery
+   * itself keys off each badge's own `status`, not off this value.
+   */
+  BADGE_FADING = 'DESVANECIMIENTO',
 }
 
 export enum LeaderboardStrategy {

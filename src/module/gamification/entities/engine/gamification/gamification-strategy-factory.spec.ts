@@ -28,6 +28,19 @@ describe('GamificationEngineFactory', () => {
     factory = module.get<GamificationEngineFactory>(GamificationEngineFactory);
   });
 
+  it('should serve engines for the badge-fading strategy', () => {
+    // The factory throws on an unknown strategy, so a project switched to
+    // fading without these cases would fail every single check-in — no
+    // points, no badges. Fading changes which badges are on offer, not how
+    // a check-in is evaluated, so both fall back to the basic engines.
+    expect(
+      factory.getBadgeEngine(GamificationStrategy.BADGE_FADING),
+    ).toBeDefined();
+    expect(
+      factory.getPointsEngine(GamificationStrategy.BADGE_FADING),
+    ).toBeDefined();
+  });
+
   it('should return correct engines', () => {
     expect(factory.getBadgeEngine(GamificationStrategy.BASIC)).toBeDefined();
     expect(factory.getBadgeEngine(GamificationStrategy.ELASTIC)).toBeDefined();
