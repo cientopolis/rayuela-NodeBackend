@@ -14,6 +14,21 @@ describe('BasicPointsEngine', () => {
     expect(engine.assignableTo(project)).toBe(true);
   });
 
+  it('should be assignable to BADGE_FADING too', () => {
+    // Fading leaves scoring alone, so basic points still apply.
+    const project = {
+      gamificationStrategy: GamificationStrategy.BADGE_FADING,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(true);
+  });
+
+  it('should not claim the elastic strategy', () => {
+    const project = {
+      gamificationStrategy: GamificationStrategy.ELASTIC,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(false);
+  });
+
   describe('reward', () => {
     it('should calculate points based on rules', () => {
       const ch = {

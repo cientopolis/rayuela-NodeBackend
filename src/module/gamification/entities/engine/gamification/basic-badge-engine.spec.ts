@@ -17,6 +17,22 @@ describe('BasicBadgeEngine', () => {
     expect(engine.assignableTo(project)).toBe(true);
   });
 
+  it('should be assignable to BADGE_FADING too', () => {
+    // Fading projects award badges by exactly the basic rules; the window is
+    // enforced inside `newBadgesFor`, not by swapping the engine.
+    const project = {
+      gamificationStrategy: GamificationStrategy.BADGE_FADING,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(true);
+  });
+
+  it('should not claim the elastic strategy', () => {
+    const project = {
+      gamificationStrategy: GamificationStrategy.ELASTIC,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(false);
+  });
+
   describe('newBadgesFor', () => {
     it('should return badges the user does not have and matches the rule', () => {
       const rule = new BadgeRule(
