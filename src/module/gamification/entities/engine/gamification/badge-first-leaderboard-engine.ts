@@ -4,7 +4,7 @@ import {
 } from '../../../../checkin/entities/game.entity';
 import { User } from '../../../../auth/users/user.entity';
 import { Project } from '../../../../project/entities/project';
-import { GamificationStrategy } from '../../../../project/dto/create-project.dto';
+import { LeaderboardStrategy } from '../../../../project/dto/create-project.dto';
 
 export function mapLeaderboardUser(u: User, project: Project) {
   return (us) => {
@@ -44,7 +44,13 @@ export class BadgesFirstLBEngine implements LeaderboardEngine {
   };
 
   assignableTo(project: Project): boolean {
-    return project.gamificationStrategy === GamificationStrategy.BASIC;
+    // A leaderboard engine is picked by the *leaderboard* strategy, the way
+    // its sibling PointsFirstLBEngine does. This used to read
+    // `gamificationStrategy === BASIC`, a copy-paste from the badge/points
+    // engines: it answered true for any basic project regardless of its
+    // leaderboard setting, and false for every elastic one that had
+    // explicitly chosen badges-first.
+    return project.leaderboardStrategy === LeaderboardStrategy.BADGES_FIRST;
   }
 
   build(usersList: User[], u: User, project: Project): LeaderboardUser[] {

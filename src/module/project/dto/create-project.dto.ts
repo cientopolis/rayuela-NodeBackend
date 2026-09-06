@@ -38,6 +38,11 @@ export class CreateProjectDto {
   ownerId: string;
   gamificationStrategy?: GamificationStrategy;
   recommendationStrategy?: RecommendationStrategy;
+  /**
+   * Was missing from this DTO even though the schema persists it and the
+   * admin UI sends it on every save, so a typo here type-checked fine.
+   */
+  leaderboardStrategy?: LeaderboardStrategy;
 }
 
 export interface FeatureCollection {

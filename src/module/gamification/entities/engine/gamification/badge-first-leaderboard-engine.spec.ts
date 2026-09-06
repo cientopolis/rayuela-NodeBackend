@@ -1,5 +1,8 @@
 import { BadgesFirstLBEngine } from './badge-first-leaderboard-engine';
-import { GamificationStrategy } from '../../../../project/dto/create-project.dto';
+import {
+  GamificationStrategy,
+  LeaderboardStrategy,
+} from '../../../../project/dto/create-project.dto';
 
 describe('BadgesFirstLBEngine', () => {
   let engine: BadgesFirstLBEngine;
@@ -8,9 +11,32 @@ describe('BadgesFirstLBEngine', () => {
     engine = new BadgesFirstLBEngine();
   });
 
-  it('should be assignable to BASIC strategy', () => {
-    const project = { gamificationStrategy: GamificationStrategy.BASIC } as any;
+  it('should be assignable to BADGES_FIRST leaderboards', () => {
+    const project = {
+      leaderboardStrategy: LeaderboardStrategy.BADGES_FIRST,
+    } as any;
     expect(engine.assignableTo(project)).toBe(true);
+  });
+
+  it('should not be assignable to a points-first leaderboard', () => {
+    // Whatever the gamification strategy is: this engine answers to the
+    // leaderboard setting, not to how check-ins are scored. The old test
+    // locked in the opposite, which is how the copy-paste survived.
+    const project = {
+      leaderboardStrategy: LeaderboardStrategy.POINTS_FIRST,
+      gamificationStrategy: GamificationStrategy.BASIC,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(false);
+  });
+
+  it('should be assignable regardless of the gamification strategy', () => {
+    for (const gamificationStrategy of Object.values(GamificationStrategy)) {
+      const project = {
+        leaderboardStrategy: LeaderboardStrategy.BADGES_FIRST,
+        gamificationStrategy,
+      } as any;
+      expect(engine.assignableTo(project)).toBe(true);
+    }
   });
 
   it('should sort users by badges then points', () => {

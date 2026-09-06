@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProjectDao } from './persistence/project.dao';
-import { CreateProjectDto } from './dto/create-project.dto';
+import {
+  CreateProjectDto,
+  GamificationStrategy,
+  LeaderboardStrategy,
+  RecommendationStrategy,
+} from './dto/create-project.dto';
 import { ProjectTemplate } from './persistence/project.schema';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { UserService } from '../auth/users/user.service';
@@ -107,13 +116,54 @@ export class ProjectService {
   }
 
   async create(createProjectDto: CreateProjectDto): Promise<ProjectTemplate> {
+    this.assertStrategiesAreKnown(createProjectDto);
     return this.projectDao.create(createProjectDto);
+  }
+
+  /**
+   * Rejects strategy values that aren't in the enums.
+   *
+   * The project schema stores these as plain strings with no `enum`, and
+   * updates go through `findByIdAndUpdate` without `runValidators`, so a typo
+   * lands in Mongo unchallenged. It surfaces much later and much worse:
+   * `GamificationEngineFactory` throws on an unknown strategy, so every
+   * check-in on that project starts failing — no points, no badges.
+   *
+   * Written by hand rather than with `class-validator` decorators because the
+   * package isn't installed and there is no global `ValidationPipe`; the
+   * decorators would be inert metadata that only looks like a guard.
+   *
+   * Undefined is left alone so partial updates keep working.
+   */
+  private assertStrategiesAreKnown(
+    dto: Partial<CreateProjectDto> | UpdateProjectDto,
+  ): void {
+    const checks: Array<[string, unknown, Record<string, string>]> = [
+      ['gamificationStrategy', dto.gamificationStrategy, GamificationStrategy],
+      [
+        'recommendationStrategy',
+        dto.recommendationStrategy,
+        RecommendationStrategy,
+      ],
+      ['leaderboardStrategy', dto.leaderboardStrategy, LeaderboardStrategy],
+    ];
+
+    for (const [field, value, allowed] of checks) {
+      if (value === undefined || value === null) continue;
+      const values: string[] = Object.values(allowed);
+      if (!values.includes(value as string)) {
+        throw new BadRequestException(
+          `${field} inválido: "${value}". Valores permitidos: ${values.join(', ')}`,
+        );
+      }
+    }
   }
 
   async update(
     id: string,
     updateProjectDto: UpdateProjectDto,
   ): Promise<ProjectTemplate> {
+    this.assertStrategiesAreKnown(updateProjectDto);
     const p = this.projectDao.update(id, updateProjectDto);
     return p;
   }
