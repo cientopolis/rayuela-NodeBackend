@@ -5,7 +5,10 @@ import { UserService } from '../auth/users/user.service';
 import { NotFoundException } from '@nestjs/common';
 import ProjectBuilder from './project.builder';
 import { User } from '../auth/users/user.entity';
-import { CreateProjectDto } from './dto/create-project.dto';
+import {
+  CreateProjectDto,
+  GamificationStrategy,
+} from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { BadgeRule } from '../gamification/entities/gamification.entity';
@@ -137,6 +140,48 @@ describe('ProjectService', () => {
       const result = await service.update('p1', dto);
       expect(mockProjectDao.update).toHaveBeenCalledWith('p1', dto);
       expect(result).toEqual(project);
+    });
+  });
+
+  describe('strategy validation', () => {
+    // The schema stores these as free strings and updates skip Mongoose
+    // validators, so an unknown value would persist and then make the engine
+    // factory throw on every check-in for that project.
+    it('accepts every value the enums declare', async () => {
+      mockProjectDao.update.mockResolvedValue(ProjectBuilder.build());
+      for (const gamificationStrategy of Object.values(GamificationStrategy)) {
+        await expect(
+          service.update('p1', { gamificationStrategy } as any),
+        ).resolves.toBeDefined();
+      }
+    });
+
+    it('rejects an unknown strategy on update', async () => {
+      await expect(
+        service.update('p1', { gamificationStrategy: 'PIZZA' } as any),
+      ).rejects.toThrow('gamificationStrategy');
+      expect(mockProjectDao.update).not.toHaveBeenCalled();
+    });
+
+    it('rejects an unknown strategy on create', async () => {
+      await expect(
+        service.create({ recommendationStrategy: 'PIZZA' } as any),
+      ).rejects.toThrow('recommendationStrategy');
+      expect(mockProjectDao.create).not.toHaveBeenCalled();
+    });
+
+    it('guards the leaderboard strategy too', async () => {
+      await expect(
+        service.update('p1', { leaderboardStrategy: 'PIZZA' } as any),
+      ).rejects.toThrow('leaderboardStrategy');
+    });
+
+    it('leaves partial updates alone', async () => {
+      // Omitting a strategy must stay legal — most updates never touch them.
+      mockProjectDao.update.mockResolvedValue(ProjectBuilder.build());
+      await expect(
+        service.update('p1', { name: 'Nuevo nombre' } as any),
+      ).resolves.toBeDefined();
     });
   });
 

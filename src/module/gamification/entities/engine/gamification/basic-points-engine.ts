@@ -14,7 +14,10 @@ import { Task } from '../../../../task/entities/task.entity';
 
 export class BasicPointsEngine implements PointsEngine {
   assignableTo(project: Project): boolean {
-    return project.gamificationStrategy === GamificationStrategy.BASIC;
+    return (
+      project.gamificationStrategy === GamificationStrategy.BASIC ||
+      project.gamificationStrategy === GamificationStrategy.BADGE_FADING
+    );
   }
 
   reward(ch: Checkin, game: Game): number {

@@ -10,7 +10,10 @@ import { GamificationStrategy } from '../../../../project/dto/create-project.dto
 import { getTaskTypeName } from '../../../../project/entities/task-type';
 export class BasicBadgeEngine implements BadgeEngine {
   assignableTo(project: Project): boolean {
-    return project.gamificationStrategy === GamificationStrategy.BASIC;
+    return (
+      project.gamificationStrategy === GamificationStrategy.BASIC ||
+      project.gamificationStrategy === GamificationStrategy.BADGE_FADING
+    );
   }
 
   newBadgesFor(u: User, ch: Checkin, project: Project): BadgeRule[] {

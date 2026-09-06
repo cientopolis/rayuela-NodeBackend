@@ -28,6 +28,40 @@ describe('GamificationEngineFactory', () => {
     factory = module.get<GamificationEngineFactory>(GamificationEngineFactory);
   });
 
+  describe('badge fading strategy', () => {
+    // The factory throws on an unknown strategy, so a project switched to
+    // fading without these cases would fail every single check-in — no
+    // points, no badges.
+    it('does not throw the way an unmapped strategy would', () => {
+      expect(() =>
+        factory.getBadgeEngine(GamificationStrategy.BADGE_FADING),
+      ).not.toThrow();
+      expect(() =>
+        factory.getPointsEngine(GamificationStrategy.BADGE_FADING),
+      ).not.toThrow();
+    });
+
+    // Identity, not just "something came back": fading changes *which*
+    // badges are on offer over time, never how a check-in is evaluated, so
+    // it has to land on exactly the engines BASIC uses. Asserting only
+    // `toBeDefined` would pass even if it were wired to the elastic engine,
+    // which would silently change everyone's scoring.
+    it('routes to the same engines as the basic strategy', () => {
+      expect(factory.getBadgeEngine(GamificationStrategy.BADGE_FADING)).toBe(
+        factory.getBadgeEngine(GamificationStrategy.BASIC),
+      );
+      expect(factory.getPointsEngine(GamificationStrategy.BADGE_FADING)).toBe(
+        factory.getPointsEngine(GamificationStrategy.BASIC),
+      );
+    });
+
+    it('does not borrow the elastic scoring engine', () => {
+      expect(
+        factory.getPointsEngine(GamificationStrategy.BADGE_FADING),
+      ).not.toBe(factory.getPointsEngine(GamificationStrategy.ELASTIC));
+    });
+  });
+
   it('should return correct engines', () => {
     expect(factory.getBadgeEngine(GamificationStrategy.BASIC)).toBeDefined();
     expect(factory.getBadgeEngine(GamificationStrategy.ELASTIC)).toBeDefined();

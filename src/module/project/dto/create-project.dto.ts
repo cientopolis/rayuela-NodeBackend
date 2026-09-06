@@ -4,6 +4,15 @@ import { TaskTypeValue } from '../entities/task-type';
 export enum GamificationStrategy {
   BASIC = 'SIN ADAPTACION',
   ELASTIC = 'ELASTICA',
+  /**
+   * Community badge fading. Points and badges are awarded exactly as under
+   * {@link GamificationStrategy.BASIC} — the adaptation acts on the badge
+   * *set* over time, not on how a single check-in is scored.
+   *
+   * Picking it is what enables the admin panel; the lifecycle machinery
+   * itself keys off each badge's own `status`, not off this value.
+   */
+  BADGE_FADING = 'DESVANECIMIENTO',
 }
 
 export enum LeaderboardStrategy {
@@ -29,6 +38,11 @@ export class CreateProjectDto {
   ownerId: string;
   gamificationStrategy?: GamificationStrategy;
   recommendationStrategy?: RecommendationStrategy;
+  /**
+   * Was missing from this DTO even though the schema persists it and the
+   * admin UI sends it on every save, so a typo here type-checked fine.
+   */
+  leaderboardStrategy?: LeaderboardStrategy;
 }
 
 export interface FeatureCollection {

@@ -17,6 +17,22 @@ describe('BasicBadgeEngine', () => {
     expect(engine.assignableTo(project)).toBe(true);
   });
 
+  it('should be assignable to BADGE_FADING too', () => {
+    // Fading projects award badges by exactly the basic rules; the window is
+    // enforced inside `newBadgesFor`, not by swapping the engine.
+    const project = {
+      gamificationStrategy: GamificationStrategy.BADGE_FADING,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(true);
+  });
+
+  it('should not claim the elastic strategy', () => {
+    const project = {
+      gamificationStrategy: GamificationStrategy.ELASTIC,
+    } as any;
+    expect(engine.assignableTo(project)).toBe(false);
+  });
+
   describe('newBadgesFor', () => {
     it('should return badges the user does not have and matches the rule', () => {
       const rule = new BadgeRule(
@@ -154,18 +170,35 @@ describe('BasicBadgeEngine', () => {
       expect(result).not.toContain(ruleA);
     });
 
-    it('keeps an already-earned badge counting as a prerequisite after the rule changes',
-        () => {
+    it('keeps an already-earned badge counting as a prerequisite after the rule changes', () => {
       // The user earned "BadgeA" back when it needed 1 check-in; an admin has
       // since raised the bar to 99. They keep the badge, so the chain below it
       // must stay reachable.
       const ruleA = new BadgeRule(
-        'rA', 'p1', 'BadgeA', 'd', 'i', 99, false, [],
-        'Cualquiera', 'Cualquiera', 'Cualquiera',
+        'rA',
+        'p1',
+        'BadgeA',
+        'd',
+        'i',
+        99,
+        false,
+        [],
+        'Cualquiera',
+        'Cualquiera',
+        'Cualquiera',
       );
       const ruleB = new BadgeRule(
-        'rB', 'p1', 'BadgeB', 'd', 'i', 1, false, ['BadgeA'],
-        'Cualquiera', 'Cualquiera', 'Cualquiera',
+        'rB',
+        'p1',
+        'BadgeB',
+        'd',
+        'i',
+        1,
+        false,
+        ['BadgeA'],
+        'Cualquiera',
+        'Cualquiera',
+        'Cualquiera',
       );
       const proj = {
         id: 'p1',
@@ -181,9 +214,9 @@ describe('BasicBadgeEngine', () => {
         latitude: '0',
       } as any;
 
-      expect(
-        engine.isBadgeSatisfied(ruleB, [ch], proj, [], new Map()),
-      ).toBe(false);
+      expect(engine.isBadgeSatisfied(ruleB, [ch], proj, [], new Map())).toBe(
+        false,
+      );
       expect(
         engine.isBadgeSatisfied(ruleB, [ch], proj, ['BadgeA'], new Map()),
       ).toBe(true);
